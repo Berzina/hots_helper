@@ -21,13 +21,10 @@ def hero_list(client, message):
     hp = HappyParser()
     hp.parse()
 
-    hero_list = hp.hero_list
-
-    matching = [hero for hero in hero_list if message.text in hero.name]
-
     client.send_message(
         message.chat.id,
-        '\n'.join([hero._as_dict() for hero in matching])
+        hp.prepare_build_response(message.text),
+        parse_mode='markdown'
     )
 
 

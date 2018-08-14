@@ -61,7 +61,36 @@ class HappyParser:
         return builds
 
     def take_by_name(self, name):
-        return [hero for hero in self.hero_list if name in hero.name]
+        return [hero for hero in self.hero_list
+                if name.lower() in hero.name.lower()]
+
+    def prepare_build_response(self, name=None):
+
+        response = ''
+
+        if name is None:
+            matching = self.hero_list
+        else:
+            matching = self.take_by_name(name)
+
+        for hero in matching:
+            response += '''
+**{name}**
+
+
+__Builds:__
+
+{blist}
+
+
+'''\
+.format(name=hero.name,
+        blist='\n'.join(['* {bname}: {blink}'
+                         .format(bname=build.name,
+                                 blink=build.link)
+                         for build in hero.builds]))
+
+        return response if response else "Can't find your hero, dude :("
 
 
 def fetch_data(url=HAPPY_URL):
