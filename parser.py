@@ -75,18 +75,18 @@ class HappyParser:
 
         for hero in matching:
             response += '''
-                *{name}*
+*{name}*
 
-                _Builds:_
-                {blist}
+_Builds:_
+{blist}
 
 
-                '''\
-                .format(name=hero.name,
-                        blist='\n'.join(['- {bname}: {blink}'
-                                            .format(bname=build.name,
-                                                    blink=build.link)
-                                            for build in hero.builds]))
+'''\
+.format(name=hero.name,
+        blist='\n'.join(['- {bname}: {blink}'
+                         .format(bname=build.name,
+                                 blink=build.link)
+                         for build in hero.builds]))
 
         return response if response else "Can't find your hero, dude :("
 

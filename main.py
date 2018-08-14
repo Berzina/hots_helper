@@ -23,7 +23,8 @@ def hero_list(client, message):
 
     client.send_message(
         message.chat.id,
-        hp.prepare_build_response(message.text)
+        hp.prepare_build_response(message.text),
+        parse_mode='markdown'
     )
 
 
