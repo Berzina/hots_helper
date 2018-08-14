@@ -1,7 +1,7 @@
 from pyrogram import Client, Filters
 
 
-from parser import HappyParser
+from parser import HappyParser, fetch_data_hourly
 
 app = Client("662893418:AAEMfj8jRYHlYZTTOa4yqzZp9uEDdyyTMDI")
 
@@ -29,3 +29,4 @@ def hero_list(client, message):
 
 
 app.run()
+fetch_data_hourly()
