@@ -1,5 +1,6 @@
 from pyrogram import Client, Filters
 
+
 from parser import HappyParser
 
 app = Client("662893418:AAEMfj8jRYHlYZTTOa4yqzZp9uEDdyyTMDI")
@@ -14,7 +15,8 @@ def hello(client, message):
         sending you some talents.
         ''')
 
-@app.on_message(Filters.command(["hero"]))
+
+@app.on_message()
 def hero_list(client, message):
     hp = HappyParser()
     hp.parse()

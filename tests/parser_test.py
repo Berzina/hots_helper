@@ -10,6 +10,12 @@ class TestParser(unittest.TestCase):
 
         print(hp.hero_list)
 
+    def test_parse_get_name(self):
+        hp = HappyParser()
+        hp.parse()
+
+        print(hp.take_by_name('Ker'))
+
 
 if __name__ == '__main__':
     unittest.main()
