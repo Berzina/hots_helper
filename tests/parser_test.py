@@ -1,26 +1,17 @@
 import unittest
-from parser import HappyParser
+import fetcher
 
 
 class TestParser(unittest.TestCase):
 
     def test_parse(self):
-        hp = HappyParser()
-        hp.parse()
-
-        # print(hp.hero_list)
+        print(fetcher.HAPPY_HEROES.hero_list)
 
     def test_parse_get_name(self):
-        hp = HappyParser()
-        hp.parse()
-
-        print(hp.take_by_name('Ker'))
+        print(fetcher.HAPPY_HEROES.take_by_name('Ker'))
 
     def test_parse_with_Response(self):
-        hp = HappyParser()
-        hp.parse()
-
-        print(hp.prepare_build_response('Ana'))
+        print(fetcher.HAPPY_HEROES.prepare_build_response('Ana'))
 
 
 if __name__ == '__main__':
