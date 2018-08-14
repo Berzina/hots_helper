@@ -77,7 +77,9 @@ class HappyParser:
             response += '''
 **{name}**
 
+
 __Builds:__
+
 {blist}
 
 
