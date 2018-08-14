@@ -21,7 +21,7 @@ def hero_list(client, message):
 
     hero_list = hp.hero_list
 
-    matching = [hero for hero in hero_list if message in hero.name]
+    matching = [hero for hero in hero_list if message.text in hero.name]
 
     client.send_message(
         message.chat.id,
