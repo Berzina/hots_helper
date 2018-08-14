@@ -8,13 +8,19 @@ class TestParser(unittest.TestCase):
         hp = HappyParser()
         hp.parse()
 
-        print(hp.hero_list)
+        # print(hp.hero_list)
 
     def test_parse_get_name(self):
         hp = HappyParser()
         hp.parse()
 
         print(hp.take_by_name('Ker'))
+
+    def test_parse_with_Response(self):
+        hp = HappyParser()
+        hp.parse()
+
+        print(hp.prepare_build_response('Ana'))
 
 
 if __name__ == '__main__':
