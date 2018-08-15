@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import os
 from pyrogram import Client, Filters
 
@@ -19,7 +21,7 @@ sending you some talents.''')
 
 @app.on_message(Filters.command(["test"]))
 def test_blizz(client, message):
-    some_hero = fetcher.HAPPY_HEROES.take_by_name('Ar')[0]
+    some_hero = fetcher.HAPPY_HEROES.take_by_name('Артас')[0]
     page = fetcher.fetch_blizz(some_hero.build_refs[0].link)
 
     print(page)
