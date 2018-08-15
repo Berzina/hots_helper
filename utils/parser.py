@@ -63,8 +63,18 @@ class HappyParser:
         return builds
 
     def take_by_name(self, name):
-        return [hero for hero in self.hero_list
-                if name.lower() in hero.name.lower()]
+        matching = [hero for hero in self.hero_list
+                    if name.lower() in hero.name.lower()]
+
+        def match_score(hero):
+            ru_pos = hero.ru_name.lower().find(name.lower())
+            en_pos = hero.en_name.lower().find(name.lower())
+
+            return ru_pos if ru_pos > en_pos else en_pos
+
+        matching.sort(key=lambda x: match_score(x))
+
+        return matching
 
     def prepare_build_response(self, name=None):
 
