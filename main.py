@@ -1,8 +1,9 @@
+import os
 from pyrogram import Client, Filters
 
 import fetcher
 
-app = Client("662893418:AAEMfj8jRYHlYZTTOa4yqzZp9uEDdyyTMDI")
+app = Client(os.get.environ('TOKEN'))
 
 
 @app.on_message(Filters.command(["start", "help"]))
