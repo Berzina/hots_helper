@@ -3,7 +3,9 @@ from pyrogram import Client, Filters
 
 import fetcher
 
-app = Client(os.get.environ('TOKEN'))
+app = Client(os.environ.get('TOKEN'),
+             api_id=os.environ.get('API_ID'),
+             api_hash=os.environ.get('API_HASH'))
 
 
 @app.on_message(Filters.command(["start", "help"]))
