@@ -7,11 +7,7 @@ BuildRef = namedtuple('BuildRef', ('name', 'link'))
 
 
 Build = namedtuple('Build', ('name', 'talents'))
-Talent = namedtuple('Talent', ('idx', 'name', 'descr'))
-
-
-BlizzHero = namedtuple('BlizzHero', ('hero', 'role', 'character',
-                                     'builds'))
+Talent = namedtuple('Talent', ('idx', 'level', 'name', 'descr', 'img'))
 
 
 class HappyParser:
@@ -116,10 +112,11 @@ __Builds:__
 
 class BlizzParser:
 
-    def __init__(self, data=None):
+    def __init__(self, build_name, data=None):
 
-        self.hero_list = []
+        self.talent_list = []
         self.page = data
+        self.build = Build(build_name, [])
 
         if data:
             self.parse()
@@ -128,4 +125,20 @@ class BlizzParser:
         self.soup = BeautifulSoup(self.page, features="html.parser")
         self.soup.prettify()
 
-        print(self.soup)
+        talents = self.soup.find_all('div', {'class': 'level-talents'})
+
+        for talent in talents:
+            _, level, *idx_n_is_active = talent['class']
+
+            name = talent.find('div', {'class': 'talent-title'}).text
+            desc = talent.find('div', {'class': 'talent-desc'}).text
+            img = talent.find('img')['src']
+
+            if len(idx_n_is_active) == 2:
+                idx, is_active = idx_n_is_active
+                self.build.talents.append(Talent(idx.replace('talentid', ''),
+                                                 level.replace('level', ''),
+                                                 name,
+                                                 desc,
+                                                 img))
+
