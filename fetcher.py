@@ -94,7 +94,7 @@ def update_heroes():
 
     for hero in HAPPY_HEROES.hero_list:
         for ref in hero.build_refs:
-            PREFETCHED[ref] = fetch_blizz(ref)
+            PREFETCHED[ref.link] = fetch_blizz(ref.link)
 
 
 fetch_data()
