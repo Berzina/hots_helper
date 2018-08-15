@@ -19,7 +19,7 @@ def hero_list(client, message):
 
     client.send_message(
         message.chat.id,
-        fetcher.HAPPy_HEROES.prepare_build_response(message.text),
+        fetcher.HAPPY_HEROES.prepare_build_response(message.text),
         parse_mode='markdown'
     )
 
