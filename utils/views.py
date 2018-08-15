@@ -1,7 +1,8 @@
 def open_build(bh):
 
-    builds_header = '''```
+    builds_header = '''
 * __{}__
+```
 ---------------------------------
  lvl  | talent | talent name
       | idx    |
@@ -10,7 +11,7 @@ def open_build(bh):
     builds_table = '''
 {:^6}|{:^8}|{:^16}
 ---------------------------------
-```'''
+'''
 
     build_full_table = ''
 
@@ -21,7 +22,7 @@ def open_build(bh):
             build_full_table += builds_table.format(talent.level, talent.idx,
                                                     talent.name)
 
-        build_full_table += '\n'
+        build_full_table += '```\n'
 
     return '''
 **{name}**
