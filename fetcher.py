@@ -13,6 +13,8 @@ HAPPY_URL = 'http://happyzerg.ru/guides/builds'
 HAPPY_PAGE = ''
 HAPPY_HEROES = HappyParser()
 
+PREFETCHED = {}
+
 BlizzHero = namedtuple('BlizzHero', ('hero', 'role', 'character',
                                      'builds'))
 
@@ -35,7 +37,8 @@ def collect_hero(hero):
     bh = BlizzHero(hero, 'role', 'character', [])
 
     for ref in hero.build_refs:
-        page = fetch_blizz(ref.link)
+        page = PREFETCHED[ref.link] if ref.link in PREFETCHED \
+                                    else fetch_blizz(ref.link)
         bp = BlizzParser(ref.name, page)
         bh.builds.append(bp.build)
 
@@ -44,25 +47,33 @@ def collect_hero(hero):
 
 def fetch_blizz(url):
 
-    options = webdriver.ChromeOptions()
-    options.add_argument('--headless')
+    global PREFETCHED
 
-    if os.environ.get("CHROME_BIN"):
-        options.binary_location = os.environ.get("CHROME_BIN")
+    try:
+        options = webdriver.ChromeOptions()
+        options.add_argument('--headless')
 
-    browser = webdriver.Chrome(options=options,
-                               executable_path=os.environ.get(
-                                "CHROME_DRIVER_BIN"))
+        if os.environ.get("CHROME_BIN"):
+            options.binary_location = os.environ.get("CHROME_BIN")
 
-    browser.get(url)
+        browser = webdriver.Chrome(options=options,
+                                   executable_path=os.environ.get(
+                                    "CHROME_DRIVER_BIN"))
 
-    WebDriverWait(browser, timeout=10).until(
-        lambda x: x.find_element_by_id('talentid1'))
-    # ... other actions
-    generated_html = browser.page_source
-    browser.quit()
+        browser.get(url)
 
-    return generated_html
+        WebDriverWait(browser, timeout=10).until(
+            lambda x: x.find_element_by_id('talentid1'))
+        # ... other actions
+        generated_html = browser.page_source
+        browser.quit()
+
+        PREFETCHED[url] = generated_html
+
+        return generated_html
+
+    except Exception as e:
+        print(e)
 
 
 def fetch_data(url=HAPPY_URL):
@@ -94,9 +105,17 @@ class FetchingThread(Thread):
         self.daemon = True
 
     def run(self):
+
+        # global PREFETCHED
+
         while not self.stopped.wait(60*60*12):
             fetch_data()
-            update_heroes()
+
+            # PREFETCHED = {}
+
+            # for hero in HAPPY_HEROES.hero_list:
+            #     for ref in hero.build_refs:
+            #         PREFETCHED[ref.link] = fetch_blizz(ref.link)
 
 
 def fetch_data_hourly():
