@@ -1,12 +1,38 @@
+import os
 import requests
 import asyncio
 from threading import Thread, Event
+from selenium import webdriver
+from selenium.webdriver.support.ui import WebDriverWait
 
 from utils.parser import HappyParser
 
 HAPPY_URL = 'http://happyzerg.ru/guides/builds'
 HAPPY_PAGE = ''
 HAPPY_HEROES = HappyParser()
+
+
+def fetch_blizz(url):
+
+    options = webdriver.ChromeOptions()
+    options.add_argument('--headless')
+
+    if os.environ.get("CHROME_BIN"):
+        options.binary_location = os.environ.get("CHROME_BIN")
+
+    browser = webdriver.Chrome(options=options,
+                               executable_path=os.environ.get(
+                                "CHROME_DRIVER_BIN"))
+
+    browser.get(url)
+
+    WebDriverWait(browser, timeout=10).until(
+        lambda x: x.find_element_by_id('talentid1'))
+    # ... other actions
+    generated_html = browser.page_source
+    browser.quit()
+
+    return generated_html
 
 
 def fetch_data(url=HAPPY_URL):

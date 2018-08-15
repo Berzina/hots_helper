@@ -11,5 +11,6 @@ pyrogram = "*"
 tgcrypto = "*"
 requests = "*"
 bs4 = "*"
+selenium = "*"
 
 [dev-packages]
