@@ -1,10 +1,5 @@
-import requests
 from bs4 import BeautifulSoup
 from collections import namedtuple
-import threading
-
-HAPPY_URL = 'http://happyzerg.ru/guides/builds'
-HAPPY_PAGE = ''
 
 Hero = namedtuple('Hero', ('name', 'image', 'builds'))
 Build = namedtuple('Build', ('name', 'link'))
@@ -12,16 +7,16 @@ Build = namedtuple('Build', ('name', 'link'))
 
 class HappyParser:
 
-    def __init__(self, data=HAPPY_PAGE):
+    def __init__(self, data=None):
 
-        if not data:
-            fetch_data()
-
-        self.page = HAPPY_PAGE
         self.hero_list = []
+        self.page = data
+
+        if data:
+            self.parse()
 
     def parse(self):
-        self.soup = BeautifulSoup(self.page)
+        self.soup = BeautifulSoup(self.page, features="html.parser")
         self.soup.prettify()
 
         with_headers = self.soup.find_all('tr')
@@ -91,18 +86,3 @@ __Builds:__
                          for build in hero.builds]))
 
         return response if response else "Can't find your hero, dude :("
-
-
-def fetch_data(url=HAPPY_URL):
-    try:
-        r = requests.get(url)
-        page = r.text
-    except Exception:
-        print('{} is unresponsive'.format(url))
-    else:
-        global HAPPY_PAGE
-        HAPPY_PAGE = page
-
-
-def fetch_data_hourly():
-    threading.Timer(3600.0, fetch_data).start()
