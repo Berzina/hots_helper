@@ -49,27 +49,31 @@ def fetch_blizz(url):
 
     global PREFETCHED
 
-    options = webdriver.ChromeOptions()
-    options.add_argument('--headless')
+    try:
+        options = webdriver.ChromeOptions()
+        options.add_argument('--headless')
 
-    if os.environ.get("CHROME_BIN"):
-        options.binary_location = os.environ.get("CHROME_BIN")
+        if os.environ.get("CHROME_BIN"):
+            options.binary_location = os.environ.get("CHROME_BIN")
 
-    browser = webdriver.Chrome(options=options,
-                               executable_path=os.environ.get(
-                                "CHROME_DRIVER_BIN"))
+        browser = webdriver.Chrome(options=options,
+                                   executable_path=os.environ.get(
+                                    "CHROME_DRIVER_BIN"))
 
-    browser.get(url)
+        browser.get(url)
 
-    WebDriverWait(browser, timeout=10).until(
-        lambda x: x.find_element_by_id('talentid1'))
-    # ... other actions
-    generated_html = browser.page_source
-    browser.quit()
+        WebDriverWait(browser, timeout=10).until(
+            lambda x: x.find_element_by_id('talentid1'))
+        # ... other actions
+        generated_html = browser.page_source
+        browser.quit()
 
-    PREFETCHED[url] = generated_html
+        PREFETCHED[url] = generated_html
 
-    return generated_html
+        return generated_html
+
+    except Exception as e:
+        print(e)
 
 
 def fetch_data(url=HAPPY_URL):
@@ -86,15 +90,8 @@ def fetch_data(url=HAPPY_URL):
 
 def update_heroes():
     global HAPPY_HEROES
-    global PREFETCHED
 
     HAPPY_HEROES = HappyParser(HAPPY_PAGE)
-
-    PREFETCHED = {}
-
-    for hero in HAPPY_HEROES.hero_list:
-        for ref in hero.build_refs:
-            PREFETCHED[ref.link] = fetch_blizz(ref.link)
 
 
 fetch_data()
@@ -108,9 +105,17 @@ class FetchingThread(Thread):
         self.daemon = True
 
     def run(self):
+
+        # global PREFETCHED
+
         while not self.stopped.wait(60*60*12):
             fetch_data()
-            update_heroes()
+
+            # PREFETCHED = {}
+
+            # for hero in HAPPY_HEROES.hero_list:
+            #     for ref in hero.build_refs:
+            #         PREFETCHED[ref.link] = fetch_blizz(ref.link)
 
 
 def fetch_data_hourly():
