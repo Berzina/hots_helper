@@ -1,8 +1,17 @@
 from bs4 import BeautifulSoup
 from collections import namedtuple
 
-Hero = namedtuple('Hero', ('name', 'ru_name', 'en_name', 'image', 'builds'))
-Build = namedtuple('Build', ('name', 'link'))
+Hero = namedtuple('Hero', ('name', 'ru_name', 'en_name', 'image',
+                           'build_refs'))
+BuildRef = namedtuple('BuildRef', ('name', 'link'))
+
+
+Build = namedtuple('Build', ('name', 'talents'))
+Talent = namedtuple('Talent', ('idx', 'name', 'descr'))
+
+
+BlizzHero = namedtuple('BlizzHero', ('hero', 'role', 'character',
+                                     'builds'))
 
 
 class HappyParser:
@@ -58,7 +67,7 @@ class HappyParser:
             name = build.find("a").text
             link = build.find("a")["href"]
 
-            builds.append(Build(name, link))
+            builds.append(BuildRef(name, link))
 
         return builds
 
@@ -100,6 +109,23 @@ __Builds:__
         blist='\n'.join(['* {bname}: {blink}'
                          .format(bname=build.name,
                                  blink=build.link)
-                         for build in hero.builds]))
+                         for build in hero.build_refs]))
 
         return response if response else "Can't find your hero, dude :("
+
+
+class BlizzParser:
+
+    def __init__(self, data=None):
+
+        self.hero_list = []
+        self.page = data
+
+        if data:
+            self.parse()
+
+    def parse(self):
+        self.soup = BeautifulSoup(self.page, features="html.parser")
+        self.soup.prettify()
+
+        print(self.soup)
