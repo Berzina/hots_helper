@@ -36,6 +36,10 @@ class TestBlizzParser(unittest.TestCase):
     def test_view(self):
         print(get_hero_view_by_name("Артас"))
 
+    def test_prefetch_view(self):
+        print(get_hero_view_by_name("Артас"))
+        print(get_hero_view_by_name("Артас"))
+
 
 if __name__ == '__main__':
     unittest.main()

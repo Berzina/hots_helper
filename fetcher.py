@@ -13,6 +13,8 @@ HAPPY_URL = 'http://happyzerg.ru/guides/builds'
 HAPPY_PAGE = ''
 HAPPY_HEROES = HappyParser()
 
+PREFETCHED = {}
+
 BlizzHero = namedtuple('BlizzHero', ('hero', 'role', 'character',
                                      'builds'))
 
@@ -35,7 +37,8 @@ def collect_hero(hero):
     bh = BlizzHero(hero, 'role', 'character', [])
 
     for ref in hero.build_refs:
-        page = fetch_blizz(ref.link)
+        page = PREFETCHED[ref.link] if ref.link in PREFETCHED \
+                                    else fetch_blizz(ref.link)
         bp = BlizzParser(ref.name, page)
         bh.builds.append(bp.build)
 
@@ -43,6 +46,8 @@ def collect_hero(hero):
 
 
 def fetch_blizz(url):
+
+    global PREFETCHED
 
     options = webdriver.ChromeOptions()
     options.add_argument('--headless')
@@ -62,6 +67,8 @@ def fetch_blizz(url):
     generated_html = browser.page_source
     browser.quit()
 
+    PREFETCHED[url] = generated_html
+
     return generated_html
 
 
@@ -79,8 +86,15 @@ def fetch_data(url=HAPPY_URL):
 
 def update_heroes():
     global HAPPY_HEROES
+    global PREFETCHED
 
     HAPPY_HEROES = HappyParser(HAPPY_PAGE)
+
+    PREFETCHED = {}
+
+    for hero in HAPPY_HEROES.hero_list:
+        for ref in hero.build_refs:
+            PREFETCHED[ref] = fetch_blizz(ref)
 
 
 fetch_data()
