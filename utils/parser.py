@@ -1,7 +1,7 @@
 from bs4 import BeautifulSoup
 from collections import namedtuple
 
-Hero = namedtuple('Hero', ('name', 'image', 'builds'))
+Hero = namedtuple('Hero', ('name', 'ru_name', 'en_name', 'image', 'builds'))
 Build = namedtuple('Build', ('name', 'link'))
 
 
@@ -24,12 +24,15 @@ class HappyParser:
         for row in with_headers[1:]:
             img_and_name, s, t = row.find_all('td')
 
-            image, name = self.get_img_n_name(img_and_name)
+            image, name, ru_name, en_name = self.get_img_n_name(img_and_name)
             builds = self.get_builds(s)
 
-            self.hero_list.append(Hero(name, image, builds))
+            self.hero_list.append(Hero(name, ru_name, en_name, image, builds))
 
     def get_img_n_name(self, img_n_name: str):
+
+        ru_name = None
+        en_name = None
 
         img, *names = img_n_name.find_all('span')
 
@@ -42,7 +45,11 @@ class HappyParser:
                          for name in names
                          if name.find("strong")])
 
-        return image, name
+        if name:
+            ru_name, *en_name = name.split()
+            en_name = en_name[0][1:-1] if en_name else None
+
+        return image, name, ru_name, en_name
 
     def get_builds(self, s):
         builds = []
