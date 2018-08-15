@@ -1,15 +1,45 @@
 import os
 import requests
 import asyncio
+from collections import namedtuple
 from threading import Thread, Event
 from selenium import webdriver
 from selenium.webdriver.support.ui import WebDriverWait
 
-from utils.parser import HappyParser
+from utils.parser import HappyParser, BlizzParser
+from utils.views import open_build
 
 HAPPY_URL = 'http://happyzerg.ru/guides/builds'
 HAPPY_PAGE = ''
 HAPPY_HEROES = HappyParser()
+
+BlizzHero = namedtuple('BlizzHero', ('hero', 'role', 'character',
+                                     'builds'))
+
+
+def get_hero_view_by_name(name):
+    some_heroes = HAPPY_HEROES.take_by_name(name)
+
+    if not some_heroes:
+        return 'Found no heroes for you :( Is {} hero name correct?'\
+               .format(name)
+    elif len(some_heroes) == 1:
+        bh = collect_hero(some_heroes[0])
+        return open_build(bh)
+    else:
+        return HAPPY_HEROES.prepare_build_response(name)
+
+
+def collect_hero(hero):
+
+    bh = BlizzHero(hero, 'role', 'character', [])
+
+    for ref in hero.build_refs:
+        page = fetch_blizz(ref.link)
+        bp = BlizzParser(ref.name, page)
+        bh.builds.append(bp.build)
+
+    return bh
 
 
 def fetch_blizz(url):

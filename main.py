@@ -19,19 +19,11 @@ Hello! I can just teach you how to play a hero
 sending you some talents.''')
 
 
-@app.on_message(Filters.command(["test"]))
-def test_blizz(client, message):
-    some_hero = fetcher.HAPPY_HEROES.take_by_name('Артас')[0]
-    page = fetcher.fetch_blizz(some_hero.build_refs[0].link)
-
-    print(page)
-
-
-@app.on_message(Filters.command(["test"]))
+@app.on_message()
 def hero_list(client, message):
     client.send_message(
         message.chat.id,
-        fetcher.HAPPY_HEROES.prepare_build_response(message.text)
+        fetcher.get_hero_view_by_name(message.text)
     )
 
 

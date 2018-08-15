@@ -1,5 +1,5 @@
 import unittest
-from fetcher import HAPPY_HEROES, fetch_data, update_heroes, fetch_blizz
+from fetcher import HAPPY_HEROES, fetch_data, update_heroes, fetch_blizz, collect_hero, get_hero_view_by_name
 from utils.parser import BlizzParser
 
 
@@ -27,11 +27,14 @@ class TestBlizzParser(unittest.TestCase):
         fetch_data()
         update_heroes()
 
-    def test_fetch_page_with_talents(self):
-        some_hero = HAPPY_HEROES.take_by_name('Артас')[0]
-        page = fetch_blizz(some_hero.build_refs[0].link)
+    # def test_fetch_page_with_talents(self):
+    #     some_hero = HAPPY_HEROES.take_by_name('Артас')[0]
+    #     page = fetch_blizz(some_hero.build_refs[0].link)
 
-        bp = BlizzParser(page)
+    #     bp = BlizzParser(some_hero.build_refs[0].name, page)
+
+    def test_view(self):
+        print(get_hero_view_by_name("Артас"))
 
 
 if __name__ == '__main__':
