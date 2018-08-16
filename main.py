@@ -8,6 +8,8 @@ import data
 
 from utils import views
 
+SESSIONS = {}
+
 app = Client(os.environ.get('TOKEN'),
              api_id=os.environ.get('API_ID'),
              api_hash=os.environ.get('API_HASH'))
@@ -19,7 +21,9 @@ def hello(client, message):
         message.chat.id,
         '''
 Hello! I can just teach you how to play a hero
-sending you some talents.''')
+sending you some talents.
+
+Just send me hero name :)''')
 
 
 @app.on_message()
@@ -27,6 +31,32 @@ def hero_list(client, message):
     client.send_message(
         message.chat.id,
         views.get_hero_view_by_name(message.text)
+    )
+
+
+@app.on_message(Filters.command(["chooseforme"]))
+def choose_for_me(client, message):
+    app.send_message(
+        message.chat.id,
+        "Well well, wanna chose a hero?",
+        reply_markup=InlineKeyboardMarkup(
+            [
+                [  # First row
+                    # Generates a callback query when pressed
+                    InlineKeyboardButton("Button", callback_data="choose1"),
+                    # Opens a web URL
+                    InlineKeyboardButton("Button", callback_data="choose0")
+                ]
+            ]
+        )
+    )
+
+
+@app.on_callback_query("choose1")
+def choose_1(client, message):
+    app.send_message(
+        message.chat.id,
+        "Well it will be done one day. Just choose by yoursef now :)"
     )
 
 
@@ -45,26 +75,5 @@ if __name__ == '__main__':
         data.update.missing()
     else:
         app.run()
-
-        app.send_message(
-            "me",  # Edit this
-            "This is a InlineKeyboardMarkup example",
-            reply_markup=InlineKeyboardMarkup(
-                [
-                    [  # First row
-                        # Generates a callback query when pressed
-                        InlineKeyboardButton("Button", callback_data="data"),
-                        # Opens a web URL
-                        InlineKeyboardButton("URL", url="https://docs.pyrogram.ml"),
-                    ],
-                    [  # Second row
-                        # Opens the inline interface of a bot in another chat with a pre-defined query
-                        InlineKeyboardButton("Choose chat", switch_inline_query="pyrogram"),
-                        # Same as the button above, but the inline interface is opened in the current chat
-                        InlineKeyboardButton("Inline here", switch_inline_query_current_chat="pyrogram"),
-                    ]
-                ]
-            )
-        )
 
 
