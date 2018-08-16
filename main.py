@@ -26,14 +26,6 @@ sending you some talents.
 Just send me hero name :)''')
 
 
-@app.on_message()
-def hero_list(client, message):
-    client.send_message(
-        message.chat.id,
-        views.get_hero_view_by_name(message.text)
-    )
-
-
 @app.on_message(Filters.command(["chooseforme"]))
 def choose_for_me(client, message):
     app.send_message(
@@ -57,6 +49,14 @@ def choose_1(client, message):
     app.send_message(
         message.chat.id,
         "Well it will be done one day. Just choose by yoursef now :)"
+    )
+
+
+@app.on_message()
+def hero_list(client, message):
+    client.send_message(
+        message.chat.id,
+        views.get_hero_view_by_name(message.text)
     )
 
 
