@@ -9,6 +9,9 @@ BuildRef = namedtuple('BuildRef', ('name', 'link'))
 Build = namedtuple('Build', ('name', 'talents'))
 Talent = namedtuple('Talent', ('idx', 'level', 'name', 'descr', 'img'))
 
+Stats = namedtuple('Stats', ('damage', 'utility', 'survivability',
+                             'complexity'))
+
 
 class HappyParser:
 
@@ -117,6 +120,8 @@ class BlizzParser:
         self.talent_list = []
         self.page = data
         self.build = Build(build_name, [])
+        self.role = ''
+        self.stats = Stats(0, 0, 0, 0)
 
         if data:
             self.parse()
@@ -142,3 +147,31 @@ class BlizzParser:
                                                  desc,
                                                  img))
 
+        self.role = self.soup.find('div', {'class': 'hero-role'})["class"][1]\
+                             .replace("hero-role-", "")
+
+        stat_damage = self.soup.find('div', {'class': 'hero-stats-damage'})
+        damage = self.count_stat(stat_damage)
+
+        stat_utility = self.soup.find('div', {'class': 'hero-stats-utility'})
+        utility = self.count_stat(stat_utility)
+
+        stat_survivability = self.soup.find('div',
+                                            {'class':
+                                             'hero-stats-survivability'})
+
+        survivability = self.count_stat(stat_survivability)
+
+        stat_complexity = self.soup.find('div', {'class':
+                                                 'hero-stats-complexity'})
+
+        complexity = self.count_stat(stat_complexity)
+
+        self.stats = Stats(damage, utility, survivability, complexity)
+
+    def count_stat(self, bs_obj):
+        stat_blocks = bs_obj.find_all('div',
+                                      {'class':
+                                       'hero-stats-bar active'})
+
+        return len(stat_blocks)

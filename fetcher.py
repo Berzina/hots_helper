@@ -15,7 +15,7 @@ HAPPY_HEROES = HappyParser()
 
 PREFETCHED = {}
 
-BlizzHero = namedtuple('BlizzHero', ('hero', 'role', 'character',
+BlizzHero = namedtuple('BlizzHero', ('hero', 'role', 'stats',
                                      'builds'))
 
 
@@ -34,13 +34,17 @@ def get_hero_view_by_name(name):
 
 def collect_hero(hero):
 
-    bh = BlizzHero(hero, 'role', 'character', [])
+    builds = []
 
     for ref in hero.build_refs:
         page = PREFETCHED[ref.link] if ref.link in PREFETCHED \
                                     else fetch_blizz(ref.link)
         bp = BlizzParser(ref.name, page)
-        bh.builds.append(bp.build)
+        builds.append(bp.build)
+
+    bh = BlizzHero(hero, bp.role, bp.stats, builds)
+
+    print(bh)
 
     return bh
 
