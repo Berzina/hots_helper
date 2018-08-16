@@ -2,11 +2,13 @@
 
 import os
 import argparse
-from pyrogram import Client, Filters
+from pyrogram import Client, Filters, ReplyKeyboardMarkup, InlineKeyboardMarkup, InlineKeyboardButton
 
 import data
 
 from utils import views
+
+SESSIONS = {}
 
 app = Client(os.environ.get('TOKEN'),
              api_id=os.environ.get('API_ID'),
@@ -19,7 +21,43 @@ def hello(client, message):
         message.chat.id,
         '''
 Hello! I can just teach you how to play a hero
-sending you some talents.''')
+sending you some talents.
+
+Just send me hero name :)''')
+
+
+@app.on_message(Filters.command(["chooseforme"]))
+def choose_for_me(client, message):
+    app.send_message(
+        message.chat.id,
+        "Well well, wanna chose a hero?",
+        reply_markup=InlineKeyboardMarkup(
+            [
+                [  # First row
+                    # Generates a callback query when pressed
+                    InlineKeyboardButton("Yes", callback_data="choose1"),
+                    # Opens a web URL
+                    InlineKeyboardButton("No", callback_data="choose0")
+                ]
+            ]
+        )
+    )
+
+
+@app.on_callback_query()
+def choose_1(client, message):
+
+    if message.data == "choose0":
+        reply = "KK goodbye then."
+    elif message.data == "choose1":
+        reply = "Well it will be done one day. Just choose by yoursef now :)"
+    else:
+        reply = "Unknown"
+
+    app.send_message(
+        message.from_user.id,
+        reply
+    )
 
 
 @app.on_message()
@@ -43,6 +81,7 @@ if __name__ == '__main__':
         data.update.data()
     elif args.updatemissing:
         data.update.missing()
-        # app.run()
     else:
         app.run()
+
+
