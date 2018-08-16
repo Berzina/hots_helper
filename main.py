@@ -56,7 +56,7 @@ def choose_1(client, message):
 
     app.send_message(
         message.from_user.id,
-        "Well it will be done one day. Just choose by yoursef now :)"
+        reply
     )
 
 
