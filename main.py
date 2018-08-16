@@ -13,6 +13,11 @@ app = Client(os.environ.get('TOKEN'),
              api_hash=os.environ.get('API_HASH'))
 
 
+@app.on_raw_update()
+def raw(client, update, users, chats):
+    print(update)
+
+
 @app.on_message(Filters.command(["start", "help"]))
 def hello(client, message):
     client.send_message(
@@ -43,6 +48,28 @@ if __name__ == '__main__':
         data.update.data()
     elif args.updatemissing:
         data.update.missing()
-        # app.run()
     else:
         app.run()
+
+        app.send_message(
+            "me",  # Edit this
+            "This is a InlineKeyboardMarkup example",
+            reply_markup=InlineKeyboardMarkup(
+                [
+                    [  # First row
+                        # Generates a callback query when pressed
+                        InlineKeyboardButton("Button", callback_data="data"),
+                        # Opens a web URL
+                        InlineKeyboardButton("URL", url="https://docs.pyrogram.ml"),
+                    ],
+                    [  # Second row
+                        # Opens the inline interface of a bot in another chat with a pre-defined query
+                        InlineKeyboardButton("Choose chat", switch_inline_query="pyrogram"),
+                        # Same as the button above, but the inline interface is opened in the current chat
+                        InlineKeyboardButton("Inline here", switch_inline_query_current_chat="pyrogram"),
+                    ]
+                ]
+            )
+        )
+
+
