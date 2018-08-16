@@ -35,16 +35,16 @@ def choose_for_me(client, message):
             [
                 [  # First row
                     # Generates a callback query when pressed
-                    InlineKeyboardButton("Button", callback_data="choose1"),
+                    InlineKeyboardButton("Yes", callback_data="choose1"),
                     # Opens a web URL
-                    InlineKeyboardButton("Button", callback_data="choose0")
+                    InlineKeyboardButton("No", callback_data="choose0")
                 ]
             ]
         )
     )
 
 
-@app.on_callback_query("choose1")
+@app.on_callback_query()
 def choose_1(client, message):
     app.send_message(
         message.chat.id,
