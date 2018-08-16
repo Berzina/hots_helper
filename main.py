@@ -2,7 +2,7 @@
 
 import os
 import argparse
-from pyrogram import Client, Filters
+from pyrogram import Client, ReplyKeyboardMarkup, InlineKeyboardMarkup, InlineKeyboardButton
 
 import data
 
@@ -11,11 +11,6 @@ from utils import views
 app = Client(os.environ.get('TOKEN'),
              api_id=os.environ.get('API_ID'),
              api_hash=os.environ.get('API_HASH'))
-
-
-@app.on_raw_update()
-def raw(client, update, users, chats):
-    print(update)
 
 
 @app.on_message(Filters.command(["start", "help"]))
