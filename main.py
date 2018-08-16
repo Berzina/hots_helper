@@ -46,8 +46,16 @@ def choose_for_me(client, message):
 
 @app.on_callback_query()
 def choose_1(client, message):
+
+    if message.data == "choose0":
+        reply = "KK goodbye then."
+    elif message.data == "choose1":
+        reply = "Well it will be done one day. Just choose by yoursef now :)"
+    else:
+        reply = "Unknown"
+
     app.send_message(
-        message.chat.id,
+        message.from_user.id,
         "Well it will be done one day. Just choose by yoursef now :)"
     )
 
