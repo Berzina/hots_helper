@@ -49,6 +49,13 @@ def listen(app, user_id, dialog_name, reply_cntr, phrase_idx):
         return {"ok": False, "message": "Start dialog before send me smth."}
 
 
+def bye(user_id, callback=None, callback_params=None):
+    SESSIONS.pop(user_id)
+
+    if callback:
+        return callback(callback_params)
+
+
 def reply(user_id, dialog_name, reply_cntr):
 
     next_reply_cntr = get_next_reply_cntr(user_id, reply_cntr)
@@ -87,8 +94,4 @@ def get_next_reply_cntr(user_id, reply_cntr):
     return next_idx
 
 
-def bye(user_id, callback=None, callback_params=None):
-    SESSIONS.pop(user_id)
 
-    if callback:
-        return callback(callback_params)

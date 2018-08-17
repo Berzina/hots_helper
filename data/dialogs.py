@@ -21,15 +21,15 @@ CHOOSE = {'questions': {i + 1: question for i, question in enumerate(
                                  'a': CLASSIC_ANSWERS},
 
                                 {'q': """
-                                      Or may be you are angry and want to
-                                      release your rage? ^^""",
+Or may be you are angry and want to
+release your rage? ^^""",
 
                                  'a': CLASSIC_ANSWERS},
 
                                 {'q': """
-                                      Well do you want to show your incredible
-                                      skills? It's no problem if not,
-                                      play lazy, friend ^^.""",
+Well do you want to show your incredible
+skills? It's no problem if not,
+play lazy, friend ^^.""",
                                  'a': CLASSIC_ANSWERS}])
                         },
           'lenreq': 6,
