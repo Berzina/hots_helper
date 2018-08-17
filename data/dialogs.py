@@ -1,4 +1,4 @@
-from callbacks import echo
+from callbacks import echo, choose
 
 # 0 idx is reserved for hello message!
 
@@ -34,7 +34,7 @@ play lazy, friend ^^.""",
                                  'a': CLASSIC_ANSWERS}])
                         },
           'lenreq': 6,
-          'callback': echo}
+          'callback': choose}
 
 
 dialog_map = {'choose': CHOOSE}
