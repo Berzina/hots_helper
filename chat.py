@@ -30,7 +30,7 @@ def send_message(user_id, dialog_name, reply_cntr, phrase_idx):
             )
         else:
             app.send_message(
-                message.from_user.id,
+                user_id,
                 "Hey smth is broken, sorry friend ^^'"
             )
 
@@ -48,4 +48,3 @@ def generate_buttons(dialog_name, new_reply_cntr, variants):
                                             callback_data=callback_data))
 
     return buttons
-

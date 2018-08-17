@@ -54,12 +54,10 @@ def callback(client, message):
     dialog_name, reply_cntr, phrase_idx = message.data.split("_")
     reply_cntr, phrase_idx = int(reply_cntr), int(phrase_idx)
 
-    user_id = message.from_user.id
-
     if reply_cntr == 0:
 
         if phrase_idx == 1:
-            chat.start(user_id, dialog_name)
+            chat.start(message.from_user.id, dialog_name)
         elif phrase_idx == 0:
             app.send_message(
                 message.from_user.id,

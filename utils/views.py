@@ -81,11 +81,11 @@ __Builds:__
                          for build in hero.build_refs]))
 
 
-def responce_form(answers):
+def responce_form(user_id, answers):
     from data import dialogs
 
     questions = dialogs.CHOOSE['questions']
-    response = 'You responded that:\n'
+    response = 'You (user {}) responded that:\n'.format(user_id)
 
     for idx, answer in answers.items():
         if idx:

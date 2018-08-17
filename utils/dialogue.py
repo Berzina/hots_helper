@@ -88,8 +88,8 @@ def get_next_reply_cntr(user_id, reply_cntr):
     return next_idx
 
 
-def bye(user_id, callback=None, callback_params=[]):
+def bye(user_id, callback=None, callback_params=None):
     SESSIONS.pop(user_id)
 
     if callback:
-        return callback(*callback_params)
+        return callback(callback_params)
