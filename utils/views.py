@@ -2,6 +2,8 @@ from data.storage import HAPPY_HEROES, BLIZZ_HEROES
 from data import update
 from utils.filters import take_by_name
 
+from data import dialogs
+
 
 def get_hero_view_by_name(name):
     some_heroes = take_by_name(HAPPY_HEROES, name)
@@ -79,3 +81,15 @@ __Builds:__
                          .format(bname=build.name,
                                  blink=build.link)
                          for build in hero.build_refs]))
+
+
+def responce_form(answers):
+    questions = dialogs.CHOOSE['questions']
+    response = 'You responded that:\n'
+
+    for idx, answer in answers.items():
+        if idx:
+            field = questions[idx]
+            response += '{}: {}\n'.format(field['q'], field['a'][answer])
+
+    return response

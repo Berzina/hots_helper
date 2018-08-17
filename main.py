@@ -4,6 +4,8 @@ import os
 import argparse
 from pyrogram import Client, Filters, ReplyKeyboardMarkup, InlineKeyboardMarkup, InlineKeyboardButton
 
+import chat
+
 import data
 
 from utils import views
@@ -26,7 +28,7 @@ sending you some talents.
 Just send me hero name :)''')
 
 
-@app.on_message(Filters.command(["chooseforme"]))
+@app.on_message(Filters.command(["chooseforme", "cfm"]))
 def choose_for_me(client, message):
     app.send_message(
         message.chat.id,
@@ -35,9 +37,9 @@ def choose_for_me(client, message):
             [
                 [  # First row
                     # Generates a callback query when pressed
-                    InlineKeyboardButton("Yes", callback_data="choose1"),
+                    InlineKeyboardButton("Yes", callback_data="choose_0_1"),
                     # Opens a web URL
-                    InlineKeyboardButton("No", callback_data="choose0")
+                    InlineKeyboardButton("No", callback_data="choose_0_0")
                 ]
             ]
         )
@@ -45,19 +47,28 @@ def choose_for_me(client, message):
 
 
 @app.on_callback_query()
-def choose_1(client, message):
+def callback(client, message):
 
-    if message.data == "choose0":
-        reply = "KK goodbye then."
-    elif message.data == "choose1":
-        reply = "Well it will be done one day. Just choose by yoursef now :)"
+    dialog_name, reply_cntr, phrase_idx = message.data.split("_")
+    reply_cntr, phrase_idx = int(reply_cntr), int(phrase_idx)
+
+    user_id = message.from_user.id
+
+    if reply_cntr == 0:
+
+        if phrase_idx == 1:
+            chat.start(user_id, dialog_name)
+        elif phrase_idx == 0:
+            app.send_message(
+                message.from_user.id,
+                "KK see you next time ^^"
+            )
+        else:
+            print("Unknown error.")
+
     else:
-        reply = "Unknown"
-
-    app.send_message(
-        message.from_user.id,
-        reply
-    )
+        chat.send_message(message.from_user.id, dialog_name, reply_cntr,
+                          phrase_idx)
 
 
 @app.on_message()
