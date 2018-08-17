@@ -101,6 +101,8 @@ def get_app():
     return app
 
 
+app.run()
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='\
                                         Run the HOTS helper bot\
@@ -115,4 +117,5 @@ if __name__ == '__main__':
     elif args.updatemissing:
         data.update.missing()
     else:
-        app.run()
+        pass
+
