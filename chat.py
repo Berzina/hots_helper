@@ -6,7 +6,6 @@ from main import send_keyboard, send_text
 
 
 def send_message(user_id, dialog_name, reply_cntr, phrase_idx):
-    print(app.resolve_peer(user_id))
 
     response = dialogue.listen(user_id, dialog_name, reply_cntr, phrase_idx)
 
