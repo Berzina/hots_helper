@@ -7,6 +7,7 @@ from utils import dialogue
 
 def start(user_id, dialog_name):
     dialogue.hello(user_id, dialog_name)
+    send_message(user_id, dialog_name, 0, 1)
 
 
 def send_message(user_id, dialog_name, reply_cntr, phrase_idx):
