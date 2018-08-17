@@ -60,7 +60,7 @@ def callback(client, message):
     if reply_cntr == 0:
 
         if phrase_idx == 1:
-            chat.start(message.from_user.id, dialog_name)
+            chat.start(app, message.from_user.id, dialog_name)
         elif phrase_idx == 0:
             app.send_message(
                 message.from_user.id,
@@ -70,7 +70,7 @@ def callback(client, message):
             print("Unknown error.")
 
     else:
-        chat.send_message(message.from_user.id, dialog_name, reply_cntr,
+        chat.send_message(app, message.from_user.id, dialog_name, reply_cntr,
                           phrase_idx)
 
 

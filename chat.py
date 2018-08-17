@@ -2,16 +2,12 @@ from pyrogram import InlineKeyboardMarkup, InlineKeyboardButton
 
 from utils import dialogue
 
-from main import get_app
 
+def send_message(app, user_id, dialog_name, reply_cntr, phrase_idx):
 
-def send_message(user_id, dialog_name, reply_cntr, phrase_idx):
-
-    response = dialogue.listen(user_id, dialog_name, reply_cntr, phrase_idx)
+    response = dialogue.listen(app, user_id, dialog_name, reply_cntr, phrase_idx)
 
     print(response)
-
-    app = get_app()
 
     if response["ok"]:
         response = response["message"]
@@ -29,9 +25,9 @@ def send_message(user_id, dialog_name, reply_cntr, phrase_idx):
             app.send_message(user_id, "Hey smth is broken, sorry friend ^^'")
 
 
-def start(user_id, dialog_name):
+def start(app, user_id, dialog_name):
     dialogue.hello(user_id, dialog_name)
-    send_message(user_id, dialog_name, 0, 1)
+    send_message(app, user_id, dialog_name, 0, 1)
 
 
 def generate_buttons(dialog_name, new_reply_cntr, variants):

@@ -22,7 +22,7 @@ def hello(user_id, dialog_name):
     return {"ok": True, "message": reply(user_id, dialog_name, 0)}
 
 
-def listen(user_id, dialog_name, reply_cntr, phrase_idx):
+def listen(app, user_id, dialog_name, reply_cntr, phrase_idx):
 
     active_dialog = get_active_dialog(user_id)
 
@@ -41,7 +41,7 @@ def listen(user_id, dialog_name, reply_cntr, phrase_idx):
                 return {"ok": True, "message": response}
             else:
                 bye(user_id,
-                    active_dialog.callback(user_id, active_dialog.incoming))
+                    active_dialog.callback(app, user_id, active_dialog.incoming))
         else:
 
             return {"ok": False, "message": "Dunno what you want to do."}
