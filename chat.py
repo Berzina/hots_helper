@@ -1,8 +1,8 @@
 from pyrogram import InlineKeyboardMarkup, InlineKeyboardButton
 
-from main import app
-
 from utils import dialogue
+
+from main import send_keyboard, send_text
 
 
 def send_message(user_id, dialog_name, reply_cntr, phrase_idx):
@@ -15,22 +15,17 @@ def send_message(user_id, dialog_name, reply_cntr, phrase_idx):
     if response["ok"]:
         response = response["message"]
         if type(response) == dict:
-            app.send_message(
-                user_id,
-                response["question"]["q"],
-                reply_markup=InlineKeyboardMarkup(
-                    [
-                        generate_buttons(dialog_name,
-                                         response["reply_cntr"],
-                                         response["question"]["a"])
-                    ]
-                )
-            )
+            send_keyboard(user_id,
+                          response["question"]["q"],
+                          InlineKeyboardMarkup(
+                                [
+                                    generate_buttons(dialog_name,
+                                                     response["reply_cntr"],
+                                                     response["question"]["a"])
+                                ]
+                          ))
         else:
-            app.send_message(
-                user_id,
-                "Hey smth is broken, sorry friend ^^'"
-            )
+            send_text(user_id, "Hey smth is broken, sorry friend ^^'")
 
 
 def start(user_id, dialog_name):

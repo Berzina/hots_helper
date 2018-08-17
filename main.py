@@ -82,6 +82,21 @@ def hero_list(client, message):
     )
 
 
+def send_text(user_id, text):
+    app.send_message(
+            user_id,
+            "Hey smth is broken, sorry friend ^^'"
+        )
+
+
+def send_keyboard(user_id, header, keyboard):
+    app.send_message(
+        user_id,
+        header,
+        reply_markup=keyboard
+    )
+
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='\
                                         Run the HOTS helper bot\
