@@ -38,7 +38,7 @@ def send_message(user_id, dialog_name, reply_cntr, phrase_idx):
 def generate_buttons(dialog_name, new_reply_cntr, variants):
     buttons = []
 
-    for variant_idx, variant in variants:
+    for variant_idx, variant in variants.items():
         callback_data = "{dialog}_{reply_cntr}_{phrase_idx}"\
                         .format(dialog=dialog_name,
                                 reply_cntr=new_reply_cntr,
