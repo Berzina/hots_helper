@@ -15,13 +15,16 @@ import data
 class TestBlizzParser(unittest.TestCase):
 
     def test_view(self):
-        print(get_hero_view_by_name("Valla"))
+        print(get_hero_view_by_name("Моралес"))
 
     def test_prefetch_view(self):
         print(get_hero_view_by_name("Лунара"))
 
     def test_prefetch_view2(self):
-        print(get_hero_view_by_name("Нова"))
+        print(get_hero_view_by_name("Вариан"))
+
+    def test_prefetch_view3(self):
+        print(get_hero_view_by_name("Силь"))
 
 
 if __name__ == '__main__':
