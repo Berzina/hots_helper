@@ -54,8 +54,8 @@ def callback(client, message):
     dialog_name, reply_cntr, phrase_idx = message.data.split("_")
     reply_cntr, phrase_idx = int(reply_cntr), int(phrase_idx)
 
-    print(message.from_user.id)
-    print(app.resolve_peer(message.from_user.id))
+    print("in callback", message.from_user.id)
+    print("in callback", app.resolve_peer(message.from_user.id))
 
     if reply_cntr == 0:
 
