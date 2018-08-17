@@ -79,3 +79,17 @@ __Builds:__
                          .format(bname=build.name,
                                  blink=build.link)
                          for build in hero.build_refs]))
+
+
+def responce_form(user_id, answers):
+    from data import dialogs
+
+    questions = dialogs.CHOOSE['questions']
+    response = 'You (user {}) responded that:\n'.format(user_id)
+
+    for idx, answer in answers.items():
+        if idx:
+            field = questions[idx]
+            response += '{}: {}\n'.format(field['q'], field['a'][answer])
+
+    return response
