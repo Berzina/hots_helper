@@ -5,14 +5,11 @@ from main import app
 from utils import dialogue
 
 
-def start(user_id, dialog_name):
-    dialogue.hello(user_id, dialog_name)
-    send_message(user_id, dialog_name, 0, 1)
-
-
 def send_message(user_id, dialog_name, reply_cntr, phrase_idx):
 
     response = dialogue.listen(user_id, dialog_name, reply_cntr, phrase_idx)
+
+    print(response)
 
     if response["ok"]:
         response = response["message"]
@@ -33,6 +30,11 @@ def send_message(user_id, dialog_name, reply_cntr, phrase_idx):
                 user_id,
                 "Hey smth is broken, sorry friend ^^'"
             )
+
+
+def start(user_id, dialog_name):
+    dialogue.hello(user_id, dialog_name)
+    send_message(user_id, dialog_name, 0, 1)
 
 
 def generate_buttons(dialog_name, new_reply_cntr, variants):
