@@ -7,8 +7,6 @@ def send_message(app, user_id, dialog_name, reply_cntr, phrase_idx):
 
     response = dialogue.listen(app, user_id, dialog_name, reply_cntr, phrase_idx)
 
-    print(response)
-
     if response["ok"]:
         response = response["message"]
         if type(response) == dict:
@@ -32,6 +30,7 @@ def start(app, user_id, dialog_name):
 
 def generate_buttons(dialog_name, new_reply_cntr, variants):
     buttons = []
+    button_row = []
 
     for variant_idx, variant in variants.items():
         callback_data = "{dialog}_{reply_cntr}_{phrase_idx}"\
@@ -39,7 +38,14 @@ def generate_buttons(dialog_name, new_reply_cntr, variants):
                                 reply_cntr=new_reply_cntr,
                                 phrase_idx=variant_idx)
 
-        buttons.append(InlineKeyboardButton(variant,
-                                            callback_data=callback_data))
+        if len(button_row) == 2:
+            buttons.append(button_row.copy())
+            button_row = []
+
+        button_row.append(InlineKeyboardButton(variant,
+                                               callback_data=callback_data))
+
+    if button_row:
+        buttons.append(button_row)
 
     return buttons
