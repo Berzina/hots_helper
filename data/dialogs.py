@@ -10,9 +10,10 @@ CHOOSE = {'questions': {i + 1: question for i, question in enumerate(
                                  'a': {i: text
                                        for i, text
                                        in enumerate(['support',
-                                                     'assasin',
+                                                     'assassin',
                                                      'warrior',
-                                                     'specialist'])}},
+                                                     'specialist',
+                                                     "Don't care"])}},
 
                                 {'q': "How'd you like to be fat? :3",
                                  'a': CLASSIC_ANSWERS},
