@@ -2,8 +2,6 @@ from data.storage import HAPPY_HEROES, BLIZZ_HEROES
 from data import update
 from utils.filters import take_by_name
 
-from data import dialogs
-
 
 def get_hero_view_by_name(name):
     some_heroes = take_by_name(HAPPY_HEROES, name)
@@ -84,6 +82,8 @@ __Builds:__
 
 
 def responce_form(answers):
+    from data import dialogs
+
     questions = dialogs.CHOOSE['questions']
     response = 'You responded that:\n'
 

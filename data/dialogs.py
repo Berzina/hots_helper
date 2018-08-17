@@ -1,4 +1,4 @@
-from chat import echo
+from callbacks import echo
 
 # 0 idx is reserved for hello message!
 

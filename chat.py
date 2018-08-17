@@ -4,8 +4,6 @@ from main import app
 
 from utils import dialogue
 
-from utils.views import responce_form
-
 
 def start(user_id, dialog_name):
     dialogue.hello(user_id, dialog_name)
@@ -50,9 +48,3 @@ def generate_buttons(dialog_name, new_reply_cntr, variants):
 
     return buttons
 
-
-def echo(user_id, message):
-    app.send_message(
-        user_id,
-        responce_form(message)
-    )
