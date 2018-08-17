@@ -6,5 +6,5 @@ def echo(app, user_id, message):
     print(responce_form(user_id, message))
     app.send_message(
         user_id,
-        responce_form(message)
+        responce_form(user_id, message)
     )
