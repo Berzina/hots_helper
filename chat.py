@@ -17,14 +17,14 @@ def send_message(user_id, dialog_name, reply_cntr, phrase_idx):
         response = response["message"]
         if type(response) == dict:
             app.send_message(user_id,
-                          response["question"]["q"],
-                          InlineKeyboardMarkup(
+                             response["question"]["q"],
+                             reply_markup=InlineKeyboardMarkup(
                                 [
                                     generate_buttons(dialog_name,
                                                      response["reply_cntr"],
                                                      response["question"]["a"])
                                 ]
-                          ))
+                             ))
         else:
             app.send_message(user_id, "Hey smth is broken, sorry friend ^^'")
 
