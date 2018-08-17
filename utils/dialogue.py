@@ -27,11 +27,11 @@ def listen(app, user_id, dialog_name, reply_cntr, phrase_idx):
     active_dialog = get_active_dialog(user_id)
 
     if active_dialog:
-
         if active_dialog.name == dialog_name:
 
             if len(active_dialog.incoming) == active_dialog.lenreq:
-                return {"ok": False, "message": "We're not a friends anymore. Say me bye."}
+                return {"ok": False,
+                        "message": "We're not a friends anymore. Say me bye."}
 
             active_dialog.incoming.update({reply_cntr: phrase_idx})
 
@@ -41,12 +41,11 @@ def listen(app, user_id, dialog_name, reply_cntr, phrase_idx):
                 return {"ok": True, "message": response}
             else:
                 bye(user_id,
-                    active_dialog.callback(app, user_id, active_dialog.incoming))
+                    active_dialog.callback(app, user_id,
+                                           active_dialog.incoming))
         else:
-
             return {"ok": False, "message": "Dunno what you want to do."}
     else:
-
         return {"ok": False, "message": "Start dialog before send me smth."}
 
 
