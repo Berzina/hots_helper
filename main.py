@@ -11,7 +11,8 @@ from pyrogram.api.types import (BotInlineMessageText,
                                 InputBotInlineResult,
                                 InputBotInlineMessageText)
 
-from pyrogram.api.functions.messages import SendInlineBotResult
+from pyrogram.api.functions.messages import (SendInlineBotResult,
+                                             SetInlineBotResults)
 
 import chat
 
