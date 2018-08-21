@@ -11,11 +11,18 @@ def choose(app, user_id, message):
     for bhero in bheroes:
         caption = '**{}** __({})__'.format(bhero.hero.name,
                                            bhero.stats)
-        app.send_photo(
-            user_id,
-            photo='happyzerg.ru{}'.format(bhero.hero.image),
-            caption=caption
-        )
+        print(bhero.hero.image)
+        if bhero.hero.image:
+            app.send_photo(
+                user_id,
+                photo='happyzerg.ru{}'.format(bhero.hero.image),
+                caption=caption
+            )
+        else:
+            app.send_message(
+                user_id,
+                caption
+            )
 
 
 def echo(app, user_id, message):
