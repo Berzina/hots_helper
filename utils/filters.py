@@ -1,5 +1,6 @@
 import random
 from data.dialogs import CHOOSE
+from data.storage import HAPPY_HEROES, BLIZZ_HEROES
 
 
 def take_by_name(happy_heroes, name):
@@ -15,6 +16,19 @@ def take_by_name(happy_heroes, name):
     matching.sort(key=lambda x: match_score(x))
 
     return matching
+
+
+def take_blizz_by_name(name):
+    some_heroes = take_by_name(HAPPY_HEROES, name)
+    try:
+        bh = next(bhero for bhero in BLIZZ_HEROES
+                  if bhero.hero.name == some_heroes[0].name)
+
+    except StopIteration:
+        return 'Hero {name} is not fully updated by some reason.'\
+           .format(name)
+
+    return bh
 
 
 def by_role(blizzard_heroes, role):

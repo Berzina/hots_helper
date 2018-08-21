@@ -10,7 +10,9 @@ import chat
 
 import data
 
-from utils import views
+import views
+
+from utils import pages, filters
 
 SESSIONS = {}
 
@@ -78,24 +80,27 @@ def hero_list(client, message):
         views.get_hero_view_by_name(message.text)
     )
 
+    bhero = filters.take_blizz_by_name(message.text)
 
-def send_text(user_id, text):
-    app.send_message(
-            user_id,
-            "Hey smth is broken, sorry friend ^^'"
+    buttons = []
+
+    if bhero:
+        for build_idx, build in enumerate(bhero.builds):
+            page_content = pages.make_page(bhero, build_idx)
+            page_link = pages.send_page(bhero.hero.en_name, page_content)
+
+            buttons.append([
+                    InlineKeyboardButton(
+                        build.name,
+                        url=page_link)])
+
+        app.send_message(
+            message.chat.id,
+            "And here you are!",
+            reply_markup=InlineKeyboardMarkup(
+                buttons
+            )
         )
-
-
-def send_keyboard(user_id, header, keyboard):
-    app.send_message(
-        user_id,
-        header,
-        reply_markup=keyboard
-    )
-
-
-def get_app():
-    return app
 
 
 app.run()

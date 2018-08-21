@@ -12,5 +12,6 @@ tgcrypto = "*"
 requests = "*"
 bs4 = "*"
 selenium = "*"
+telegraph = "*"
 
 [dev-packages]
