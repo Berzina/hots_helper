@@ -1,3 +1,4 @@
+import random
 from data.dialogs import CHOOSE
 
 
@@ -40,6 +41,9 @@ def by_choose(blizzard_heroes, answers):
 
     stats_mapping = tuple(zip(STATS, STATS_VALUES))
 
+    # 0 is for 'For sure!',
+    # 1 is for "Don't care.",
+    # 2 is for 'No way!'
     stats_mapping = [(stat_name, stat_value)
                      for stat_name, stat_value
                      in stats_mapping
@@ -48,10 +52,17 @@ def by_choose(blizzard_heroes, answers):
     stats_mapping.sort(key=lambda stats: stats[1])
 
     for stat in stats_mapping:
+        reverse = False if stat[1] == 0 else True
+
         blizzard_heroes = sorted(blizzard_heroes,
                                  key=lambda bhero:
                                      bhero.stats._asdict()[stat[0]],
-                                 reverse=True)
+                                 reverse=reverse)
+
+    blizzard_heroes = blizzard_heroes[:10]
+    random.shuffle(blizzard_heroes)
+
+    print(blizzard_heroes[0])
 
     return blizzard_heroes[:3]
-#damage=5, utility=5, survivability=9, complexity=4
+# damage=5, utility=5, survivability=9, complexity=4
