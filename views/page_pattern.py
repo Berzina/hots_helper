@@ -29,8 +29,8 @@ STYLES = """
 
 ROW_PATTERN = """
 <p>
-  <strong>{talent.level}</strong>|<strong>{talent.idx}</strong>|<strong>{talent.name}</strong><br/>
-  ----------------------------
+  <code><strong>{talent.level}</strong>|<strong>{talent.idx}</strong>|<strong>{talent.name}</strong><br/>
+  ----------------------------</code>
   <figure> <img src="http://blizzardheroes.ru{talent.img}"/>
     <figcaption>
       <i>{talent.descr}</i>
