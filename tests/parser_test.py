@@ -1,5 +1,5 @@
 import unittest
-from utils.views import get_hero_view_by_name
+from views import get_hero_view_by_name
 from utils.parser import BlizzParser
 
 import data

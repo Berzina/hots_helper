@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "d750cbe98eb24dbe983a6e5e6ab56bfbf9f73e9c4f81f4842d2620d7cf777c6c"
+            "sha256": "2dd48a11e1cadda3513910429f638c6902b01c0252a8ce253f4c4bcb96317f53"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -87,6 +87,14 @@
             ],
             "index": "pypi",
             "version": "==3.14.0"
+        },
+        "telegraph": {
+            "hashes": [
+                "sha256:65c3593a9dc2b381e941b3d36fcd31d40bf306ec1f0d222d07ce87efebfce070",
+                "sha256:ab540a9e7393870c66cd34e048f161cbba9b65271ff2aae06c58d7aa69fcda64"
+            ],
+            "index": "pypi",
+            "version": "==1.3.0"
         },
         "tgcrypto": {
             "hashes": [
