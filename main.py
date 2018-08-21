@@ -6,6 +6,13 @@ from pyrogram import (Client, Filters,
                       ReplyKeyboardMarkup,
                       InlineKeyboardMarkup, InlineKeyboardButton)
 
+from pyrogram.api.types import (BotInlineMessageText,
+                                MessageEntityBotCommand,
+                                InputBotInlineResult,
+                                InputBotInlineMessageText)
+
+from pyrogram.api.functions.messages import SendInlineBotResult
+
 import chat
 
 import data
@@ -30,9 +37,18 @@ sending you some talents.
 Just send me hero name :)''')
 
 
-@app.on_raw_update()
-def raw(client, update, users, chats):
-    print(update)
+@app.on_message(Filters.regex("test_inline"))
+def inline(client, message):
+    app.send(
+        SetInlineBotResults(query_id=0,
+                            results=[
+                              InputBotInlineResult(
+                                id="0",
+                                type='message',
+                                send_message=InputBotInlineMessageText('hello')
+                              )
+                            ])
+        )
 
 
 @app.on_message(Filters.command(["chooseforme", "cfm"]))
