@@ -36,7 +36,7 @@ ROW_PATTERN = """
   <td>{talent.descr}</td>
 """
 
-PAGE = STYLES + """
+PAGE = """
 <!DOCTYPE html>
 <html>
 <head>
