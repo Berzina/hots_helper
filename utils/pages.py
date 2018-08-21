@@ -2,13 +2,13 @@ from telegraph import Telegraph
 
 from views import page_pattern
 
-from html_telegraph_poster import TelegraphPoster
-t = TelegraphPoster()
+# from html_telegraph_poster import TelegraphPoster
+# t = TelegraphPoster()
 
 MY_NAME = 'hotsassistbot'
 
-# telegraph = Telegraph()
-# telegraph.create_account(short_name=MY_NAME)
+telegraph = Telegraph()
+telegraph.create_account(short_name=MY_NAME)
 
 
 def make_page(blizzard_hero, build_idx):
@@ -25,8 +25,7 @@ def make_page(blizzard_hero, build_idx):
 def send_page(title, content):
     title = title if title else MY_NAME
 
-    response = t.post(title=title,
-                      author=MY_NAME,
-                      text=content)
+    response = telegraph.create_page(title,
+                                     html_content=content)
 
-    return response['url']
+    return 'https://telegra.ph/{}'.format(response['path'])

@@ -40,21 +40,13 @@ ROW_PATTERN = """
 """
 
 PAGE = """
-<!DOCTYPE html>
-<html>
-<head>
-  <title>{hero.en_name}</title>
-</head>
-<body>
+
   <img src="http://happyzerg.ru{hero.image}"/>
-  <h1>{hero.name}</h1>
-  <i>{bhero.stats}</i>
-  <h2>{build.name}</h2>
+  <h3>{hero.name}</h3>
+  <i>{bhero.stats}</i><br/>
+  <h4>{build.name}</h4>
 
 
   {rows}
 
-
-</body>
-</html>
 """
