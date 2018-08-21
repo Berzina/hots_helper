@@ -28,44 +28,25 @@ STYLES = """
 """
 
 ROW_PATTERN = """
-<tr>
-  <td>{talent.level}</td>
-  <td>{talent.idx}</td>
-  <td><img src="http://blizzardheroes.ru{talent.img}"/>
-      <p class="talent_name">{talent.name}</p></td>
-  <td>{talent.descr}</td>
+<p>
+  <strong>{talent.level}</strong>|<strong>{talent.idx}</strong>|<strong>{talent.name}</strong><br/>
+  ----------------------------
+  <figure> <img src="http://blizzardheroes.ru{talent.img}"/>
+    <figcaption>
+      <i>{talent.descr}</i>
+    </figcaption>
+  </figure>
+</p>
 """
 
-PAGE = STYLES + """
-<!DOCTYPE html>
-<html>
-<head>
-  <title>{hero.en_name}</title>
-</head>
-<body>
-  <table>
-    <tr>
-      <td>
-        <img src="http://happyzerg.ru{hero.image}"/>
-      </td>
-      <td>
-        <h1>{hero.name}</h1>
-        <p id="stats">{bhero.stats}</p>
-        <h2>{build.name}</h2>
-      </td>
-    </tr>
-  </table>
+PAGE = """
 
-  <table id="main-table">
-    <tr>
-      <td>Level</td>
-      <td>Talent idx</td>
-      <td>Image</td>
-      <td>Description</td>
-    </tr>
-    {rows}
-  </table>
+  <img src="http://happyzerg.ru{hero.image}"/>
+  <h3>{hero.name}</h3>
+  <i>{bhero.stats}</i><br/>
+  <h4>{build.name}</h4>
 
-</body>
-</html>
+
+  {rows}
+
 """
