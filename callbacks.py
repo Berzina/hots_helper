@@ -11,11 +11,11 @@ def choose(app, user_id, message):
     for bhero in bheroes:
         caption = '**{}** __({})__'.format(bhero.hero.name,
                                            bhero.stats)
-        print(bhero.hero.image)
+        print('http://happyzerg.ru{}'.format(bhero.hero.image))
         if bhero.hero.image:
             app.send_photo(
                 user_id,
-                photo='happyzerg.ru{}'.format(bhero.hero.image),
+                photo='http://happyzerg.ru{}'.format(bhero.hero.image),
                 caption=caption
             )
         else:
