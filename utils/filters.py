@@ -62,7 +62,5 @@ def by_choose(blizzard_heroes, answers):
     blizzard_heroes = blizzard_heroes[:10]
     random.shuffle(blizzard_heroes)
 
-    print(blizzard_heroes[0])
-
     return blizzard_heroes[:3]
 # damage=5, utility=5, survivability=9, complexity=4
