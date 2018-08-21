@@ -110,7 +110,7 @@ def hero_list(client, message):
     if bhero:
         for build_idx, build in enumerate(bhero.builds):
             page_content = pages.make_page(bhero, build_idx)
-            page_link = pages.send_page(bhero.en_name, page_content)
+            page_link = pages.send_page(bhero.hero.en_name, page_content)
 
             buttons.append([
                     InlineKeyboardButton(
