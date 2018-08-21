@@ -105,25 +105,20 @@ def hero_list(client, message):
 
     bhero = filters.take_blizz_by_name(message.text)
 
-    buttons = []
-
     if bhero:
         for build_idx, build in enumerate(bhero.builds):
             page_content = pages.make_page(bhero, build_idx)
             page_link = pages.send_page(bhero.hero.en_name, page_content)
 
-            buttons.append([
-                    InlineKeyboardButton(
-                        build.name,
-                        url=page_link)])
+            # buttons.append([
+            #         InlineKeyboardButton(
+            #             build.name,
+            #             url=page_link)])
 
-        app.send_message(
-            message.chat.id,
-            "And here you are!",
-            reply_markup=InlineKeyboardMarkup(
-                buttons
+            app.send_message(
+                message.chat.id,
+                page_link
             )
-        )
 
 
 app.run()

@@ -13,6 +13,5 @@ requests = "*"
 bs4 = "*"
 selenium = "*"
 telegraph = "*"
-html-telegraph-poster = "*"
 
 [dev-packages]
