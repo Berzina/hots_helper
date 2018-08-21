@@ -48,7 +48,8 @@ def inline(client, message):
                                 type='message',
                                 send_message=InputBotInlineMessageText('hello')
                               )
-                            ])
+                            ],
+                            cache_time=2147483646)
         )
 
 
