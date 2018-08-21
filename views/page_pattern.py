@@ -40,12 +40,13 @@ ROW_PATTERN = """
 """
 
 PAGE = """
+  <figure> <img src="http://happyzerg.ru{hero.image}"/>
+    <figcaption>
+      <i>{bhero.stats}</i>
+    </figcaption>
+  </figure>
 
-  <img src="http://happyzerg.ru{hero.image}"/>
-  <h3>{hero.name}</h3>
-  <i>{bhero.stats}</i><br/>
-  <h4>{build.name}</h4>
-
+  <h3>{build.name}</h3>
 
   {rows}
 
