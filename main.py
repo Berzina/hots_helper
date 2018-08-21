@@ -30,6 +30,11 @@ sending you some talents.
 Just send me hero name :)''')
 
 
+@app.on_raw_update()
+def raw(client, update, users, chats):
+    print(update)
+
+
 @app.on_message(Filters.command(["chooseforme", "cfm"]))
 def choose_for_me(client, message):
     app.send_message(
