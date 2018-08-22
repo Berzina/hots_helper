@@ -1,6 +1,13 @@
 import pickle
 import os
 
+MAP_NAMES = ['Alterac Pass', 'Battlefield of Eternity', "Blackheart's Bay",
+             'Braxis Holdout', 'Cursed Hollow', 'Dragon Shire',
+             'Garden of Terror', 'Hanamura', 'Haunted Mines',
+             'Industrial District', 'Infernal Shrines', 'Sky Temple',
+             'Tomb of the Spider Queen', 'Towers of Doom',
+             'Volskaya Foundry', 'Warhead Junction']
+
 HAPPY_FILE = 'data/happy.bin'
 BLIZZ_FILE = 'data/blizz.bin'
 
