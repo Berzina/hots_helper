@@ -1,5 +1,4 @@
-from data.storage import HAPPY_HEROES, BLIZZ_HEROES
-from data import update
+from data.storage import BLIZZ_HEROES
 from utils.filters import take_by_name
 
 
@@ -10,15 +9,6 @@ def get_hero_view_by_name(name):
         return 'Found no heroes for you :( Is {} hero name correct?'\
                .format(name)
     elif len(some_heroes) == 1:
-
-        try:
-            bh = next(bhero for bhero in BLIZZ_HEROES
-                      if bhero.hero.name == some_heroes[0].name)
-
-        except StopIteration:
-            return 'Hero {name} is not fully updated by some reason.'\
-               .format(name)
-
         return open_build(bh)
     else:
         return link_build(some_heroes)

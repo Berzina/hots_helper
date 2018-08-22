@@ -8,7 +8,7 @@ from pyrogram import (Client, Filters,
 
 import chat
 
-import data
+from data import update
 
 import views
 
@@ -98,8 +98,6 @@ def hero_list(client, message):
             )
 
 
-app.run()
-
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='\
                                         Run the HOTS helper bot\
@@ -110,10 +108,8 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     if args.update:
-        app.stop()
-        data.update.data()
+        update.update_all()
     elif args.updatemissing:
-        app.stop()
-        data.update.missing()
+        update.update_missing()
     else:
-        pass
+        app.run()

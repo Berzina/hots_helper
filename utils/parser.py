@@ -1,138 +1,215 @@
+# -*- coding: utf-8 -*-
+
 from bs4 import BeautifulSoup
 from collections import namedtuple
 
+from utils.filters import get_cyrillic, get_cyrillic_str
+
+from utils.fetcher import fetch_blizzhero_page
+
+from data.storage import set_blizz, get_blizz
+
+ApiHero = namedtuple('ApiHero', ('name', 'ru_name', 'en_name', 'image',
+                                 'role', 'type'))
+
 Hero = namedtuple('Hero', ('name', 'ru_name', 'en_name', 'image',
-                           'build_refs'))
-BuildRef = namedtuple('BuildRef', ('name', 'link'))
-
-
-Build = namedtuple('Build', ('name', 'talents'))
-Talent = namedtuple('Talent', ('idx', 'level', 'name', 'descr', 'img'))
+                           'role', 'type', 'universe', 'blizz_link',
+                           'stats'))
 
 Stats = namedtuple('Stats', ('damage', 'utility', 'survivability',
                              'complexity'))
 
+Build = namedtuple('Build', ('name', 'talents', 'link'))
+Talent = namedtuple('Talent', ('idx', 'level', 'name', 'descr', 'img'))
 
-class HappyParser:
+BlizzHero = namedtuple('BlizzHero', ('hero', 'builds'))
+
+
+class APIParser:
 
     def __init__(self, data=None):
-
         self.hero_list = []
-        self.page = data
+        self.json = data
 
         if data:
             self.parse()
 
     def parse(self):
-        self.soup = BeautifulSoup(self.page, features="html.parser")
-        self.soup.prettify()
+        for hero in self.json:
+            ru_name = get_cyrillic(hero["translations"])
 
-        with_headers = self.soup.find_all('tr')
+            self.hero_list.append(
+                ApiHero("{ru_name} ({en_name})"
+                        .format(ru_name=ru_name.capitalize(),
+                                en_name=hero["name"]),
 
-        for row in with_headers[1:]:
-            img_and_name, s, t = row.find_all('td')
-
-            image, name, ru_name, en_name = self.get_img_n_name(img_and_name)
-            builds = self.get_builds(s)
-
-            self.hero_list.append(Hero(name, ru_name, en_name, image, builds))
-
-    def get_img_n_name(self, img_n_name: str):
-
-        ru_name = None
-        en_name = None
-
-        img, *names = img_n_name.find_all('span')
-
-        if img.find("img"):
-            image = img.find("img")['src']
-        else:
-            image = None
-
-        name = ' '.join([name.find("strong").text
-                         for name in names
-                         if name.find("strong")])
-
-        if not name:
-            name = ' '.join([name.find("b").text
-                             for name in names
-                             if name.find("b")])
-
-        if name:
-            ru_name, *en_name = name.split()
-            en_name = en_name[0][1:-1] if en_name else None
-
-        return image, name, ru_name, en_name
-
-    def get_builds(self, s):
-        builds = []
-
-        for build in s.find_all("li"):
-            name = build.find("a").text
-            link = build.find("a")["href"]
-
-            builds.append(BuildRef(name, link))
-
-        return builds
+                        ru_name.capitalize(),
+                        hero["name"],
+                        list(hero["icon_url"].values())[0],
+                        hero["role"],
+                        hero["type"]))
 
 
 class BlizzParser:
+    BLIZZHERO_URL = 'http://blizzardheroes.ru'
 
-    def __init__(self, build_name, data=None):
+    def __init__(self, hero_list=[], page=None, update_on_loading=False):
+        self.hero_list = []
+        self.bhero_list = []
+        self.heroes = hero_list
+        self.page = page
+        self.update_on_loading = update_on_loading
 
-        self.talent_list = []
-        self.page = data
-        self.build = Build(build_name, [])
-        self.role = ''
-        self.stats = Stats(0, 0, 0, 0)
-        self.parsed = False
-
-        if data:
+        if hero_list and page:
             self.parse()
-            self.parsed = True
 
     def parse(self):
-        self.soup = BeautifulSoup(self.page, features="html.parser")
-        self.soup.prettify()
+        self.parse_main()
 
-        talents = self.soup.find_all('div', {'class': 'level-talents'})
+        for hero in self.hero_list:
 
-        for talent in talents:
-            _, level, *idx_n_is_active = talent['class']
+            one_hero, its_builds = self.parse_hero_page(hero)
+            blizz_hero = BlizzHero(one_hero, builds=[])
 
-            name = talent.find('div', {'class': 'talent-title'}).text
-            desc = talent.find('div', {'class': 'talent-desc'}).text
-            img = talent.find('img')['src']
+            for build in its_builds:
+                talents = self.parse_talents_page(build.link)
+                build = Build(**{**build._asdict(), **{'talents': talents}})
 
-            if len(idx_n_is_active) == 2:
-                idx, is_active = idx_n_is_active
-                self.build.talents.append(Talent(idx.replace('talentid', ''),
-                                                 level.replace('level', ''),
-                                                 name,
-                                                 desc,
-                                                 img))
+                blizz_hero.builds.append(build)
 
-        self.role = self.soup.find('div', {'class': 'hero-role'})["class"][1]\
-                             .replace("hero-role-", "")
+                if self.update_on_loading:
+                    set_blizz([blizz_hero], replace=False)
+                    print("Saved to bin: {}".format(blizz_hero.hero.name))
+                    print("in bin now: {}"
+                          .format(" ".join([bhero.hero.name
+                                            for bhero in get_blizz()])))
 
-        stat_damage = self.soup.find('div', {'class': 'hero-stats-damage'})
+            self.bhero_list.append(blizz_hero)
+
+            print("Loaded: {}".format(blizz_hero.hero.name))
+
+        return self.bhero_list
+
+    def parse_main(self):
+        stats = Stats(0, 0, 0, 0)
+
+        soup = BeautifulSoup(self.page, features="html.parser")
+        soup.prettify()
+
+        for api_hero in self.heroes:
+            ru_name = api_hero.ru_name.lower()
+
+            ru_name = ru_name.split()[1] \
+                      if len(ru_name.split()) == 2 and ru_name != 'ли ли'\
+                      else ru_name
+
+            if api_hero.en_name == 'E.T.C.':
+                search_name = 'е.т.с.'
+            elif api_hero.en_name == 'D.Va':
+                search_name = 'd.va'
+            else:
+                search_name = ru_name
+
+            hero_block = soup.find('a', {'data-name': ru_name})
+
+            if hero_block:
+
+                universe = hero_block.get("data-universe", "")
+                link = hero_block.get("href", "")
+
+                self.hero_list.append(
+                    Hero(**api_hero._asdict(),
+                         universe=universe,
+                         blizz_link=self.BLIZZHERO_URL + link,
+                         stats=stats))
+
+    def parse_hero_page(self, hero):
+        page = fetch_blizzhero_page(hero.blizz_link)
+
+        if page:
+            soup = BeautifulSoup(page, features="html.parser")
+            soup.prettify()
+
+            stats = self.get_stats(soup)
+            builds = self.get_builds(soup)
+
+            return Hero(**{**hero._asdict(), **{'stats': stats}}), builds
+        else:
+            return hero, []
+
+    def get_stats(self, bs_obj):
+        stat_damage = bs_obj.find('div', {'class': 'hero-stats-damage'})
         damage = self.count_stat(stat_damage)
 
-        stat_utility = self.soup.find('div', {'class': 'hero-stats-utility'})
+        stat_utility = bs_obj.find('div', {'class': 'hero-stats-utility'})
         utility = self.count_stat(stat_utility)
 
-        stat_survivability = self.soup.find('div',
-                                            {'class':
-                                             'hero-stats-survivability'})
+        stat_survivability = bs_obj.find('div',
+                                         {'class':
+                                          'hero-stats-survivability'})
 
         survivability = self.count_stat(stat_survivability)
 
-        stat_complexity = self.soup.find('div', {'class':
-                                                 'hero-stats-complexity'})
+        stat_complexity = bs_obj.find('div', {'class':
+                                              'hero-stats-complexity'})
 
         complexity = self.count_stat(stat_complexity)
 
-        self.stats = Stats(damage, utility, survivability, complexity)
+        stats = Stats(damage, utility, survivability, complexity)
+
+        return stats
+
+    def get_builds(self, bs_obj):
+        talents = []
+        builds = []
+
+        guide_block = bs_obj.find('div', {'class': 'guides-list'})
+
+        guide_blocks = guide_block.find_all('a')
+
+        guide_blocks = guide_blocks if len(guide_blocks) <= 2 \
+                                    else guide_blocks[:2]
+
+        for block in guide_blocks:
+            name = block.find('div', {'class': 'title'}).text
+            link = self.BLIZZHERO_URL + block.get('href', "")
+
+            builds.append(Build(name, [], link))
+
+        return builds
+
+    def parse_talents_page(self, link):
+        talents = []
+        idx = 0
+
+        page = fetch_blizzhero_page(link)
+
+        if page:
+            soup = BeautifulSoup(page, features="html.parser")
+            soup.prettify()
+
+            talent_row = soup.find('div', {'class': 'single-build'})
+
+            for talent in talent_row.find_all('div', {'class': 'single'}):
+                level = talent.find('div', {'class': 'single-level'}).text
+
+                talent_info = talent.find('div', {'class': 'single-talent'})
+
+                img = self.BLIZZHERO_URL + talent_info.find('img')['src']
+
+                name = talent_info.find('div',
+                                        {'class':
+                                         'tooltipe-talent-title'}).text
+
+                name = get_cyrillic_str(name)
+
+                descr = talent_info.find('div',
+                                         {'class':
+                                          'tooltipe-talent-text'}).text
+
+                talents.append(Talent(idx, level, name, descr, img))
+
+        return talents
 
     def count_stat(self, bs_obj):
         stat_blocks = bs_obj.find_all('div',
