@@ -10,9 +10,31 @@ from selenium.webdriver.support.ui import WebDriverWait
 from utils.parser import BlizzParser
 
 HAPPY_URL = 'http://happyzerg.ru/guides/builds'
+STATISTICS_URL = 'https://hots.dog/'
 
 BlizzHero = namedtuple('BlizzHero', ('hero', 'role', 'stats',
                                      'builds'))
+
+
+def fetch_statistics():
+    options = webdriver.ChromeOptions()
+    options.add_argument('--headless')
+
+    if os.environ.get("CHROME_BIN"):
+        options.binary_location = os.environ.get("CHROME_BIN")
+
+    browser = webdriver.Chrome(options=options,
+                               executable_path=os.environ.get(
+                                "CHROME_DRIVER_BIN"))
+
+    browser.get(STATISTICS_URL)
+
+    WebDriverWait(browser, timeout=10).until(
+        lambda x: x.find_elements_by_xpath('//*[@id="root"]/main/section'))
+
+    page = browser.page_source
+
+    return page
 
 
 def fetch_blizz_hero(hero):
