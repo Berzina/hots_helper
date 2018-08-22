@@ -1,46 +1,35 @@
-from utils.fetcher import fetch_data, fetch_blizz, fetch_blizz_hero
-from utils.parser import HappyParser
+from utils.fetcher import fetch_heroes, fetch_blizzhero_page
+from utils.parser import APIParser, BlizzParser
+from utils.filters import take_by_name
 
-from .storage import (set_happy, set_blizz, get_happy,
-                      HAPPY_HEROES, BLIZZ_HEROES)
-
-
-def happy_heroes():
-    HAPPY_HEROES = HappyParser(fetch_data()).hero_list
-    set_happy(HAPPY_HEROES)
+from .storage import set_blizz, BLIZZ_HEROES
 
 
-def blizz_heroes(hero=None):
-    if not hero:
-        HAPPY_HEROES = get_happy()
-        set_blizz(fetch_blizz(HAPPY_HEROES))
-    else:
-        new_blizz = fetch_blizz_hero(hero)
-        set_blizz([new_blizz], replace=False)
+def update_all(update_on_loading=True):
+    set_blizz([])
+    page = fetch_blizzhero_page()
+    heroes = APIParser(fetch_heroes()).hero_list
+    bheroes = BlizzParser(heroes, page, update_on_loading).bhero_list
+
+    if not update_on_loading:
+        set_blizz(bheroes)
 
 
-def missing():
-    missing_blizz_heroes()
-    missing_blizz_talents()
+def update_missing(update_on_loading=True):
+    page = fetch_blizzhero_page()
+    heroes = APIParser(fetch_heroes()).hero_list
 
+    missing_heroes = []
 
-def missing_blizz_heroes():
-    for hero in HAPPY_HEROES:
-        try:
-            bh = next(bhero for bhero in BLIZZ_HEROES
-                      if bhero.hero.name == hero.name)
+    for hero in heroes:
+        if not take_by_name(BLIZZ_HEROES, hero.name):
+            missing_heroes.append(hero)
 
-        except StopIteration:
-            blizz_heroes(hero)
+    print("Founded missing heroes:\n{}".format("\n"
+                                               .join(
+                                    [hero.name for hero in missing_heroes])))
 
+    # bheroes = BlizzParser(missing_heroes, page, update_on_loading).bhero_list
 
-def missing_blizz_talents():
-    for bhero in BLIZZ_HEROES:
-        for build in bhero.builds:
-            if not build.talents:
-                blizz_heroes(bhero.hero)
-
-
-def data():
-    happy_heroes()
-    blizz_heroes()
+    # if not update_on_loading:
+    #     set_blizz(bheroes)

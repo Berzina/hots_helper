@@ -1,12 +1,13 @@
 import random
 import re
+from itertools import dropwhile
+
 from data.dialogs import CHOOSE
-from data.storage import HAPPY_HEROES, BLIZZ_HEROES
 
 
-def take_by_name(happy_heroes, name):
-    matching = [hero for hero in happy_heroes
-                if name.lower() in hero.name.lower()]
+def take_by_name(bheroes, name):
+    matching = [bhero for bhero in bheroes
+                if name.lower() in bhero.hero.name.lower()]
 
     def match_score(hero):
         ru_pos = hero.ru_name.lower().find(name.lower())
@@ -14,26 +15,13 @@ def take_by_name(happy_heroes, name):
 
         return ru_pos if ru_pos > en_pos else en_pos
 
-    matching.sort(key=lambda x: match_score(x))
+    matching.sort(key=lambda x: match_score(x.hero))
 
     return matching
 
 
-def take_blizz_by_name(name):
-    some_heroes = take_by_name(HAPPY_HEROES, name)
-    try:
-        bh = next(bhero for bhero in BLIZZ_HEROES
-                  if bhero.hero.name == some_heroes[0].name)
-
-    except StopIteration:
-        return 'Hero {name} is not fully updated by some reason.'\
-           .format(name)
-
-    return bh
-
-
 def by_role(blizzard_heroes, role):
-    return [bhero for bhero in blizzard_heroes if bhero.role == role]
+    return [bhero for bhero in blizzard_heroes if bhero.hero.role == role]
 
 
 def by_choose(blizzard_heroes, answers):
@@ -71,7 +59,7 @@ def by_choose(blizzard_heroes, answers):
 
         blizzard_heroes = sorted(blizzard_heroes,
                                  key=lambda bhero:
-                                     bhero.stats._asdict()[stat[0]],
+                                     bhero.hero.stats._asdict()[stat[0]],
                                  reverse=reverse)
 
     blizzard_heroes = blizzard_heroes[:10]
@@ -84,3 +72,20 @@ def by_choose(blizzard_heroes, answers):
 # TODO: hardcode range
 def is_cyrillic(text):
     return bool(re.search('[\u0400-\u04FF]', text))
+
+
+def get_cyrillic(from_list):
+    ru_name_search = dropwhile(lambda name: not is_cyrillic(name),
+                               from_list)
+    try:
+        ru_name = next(ru_name_search)
+    except StopIteration:
+        ru_name = ''
+
+    return ru_name
+
+
+def get_cyrillic_str(from_str):
+    ru_str_list = list(dropwhile(lambda c: not is_cyrillic(c),
+                                 from_str))
+    return ''.join(ru_str_list) if ru_str_list else from_str

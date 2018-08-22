@@ -1,9 +1,9 @@
 import unittest
-from views import get_hero_view_by_name
-from utils.parser import BlizzParser, APIParser, BlizzParser2
-from utils.fetcher import fetch_heroes, fetch_blizzheroes_page
+# from views import get_hero_view_by_name
+# from utils.parser import APIParser, BlizzParser
+# from utils.fetcher import fetch_heroes, fetch_blizzhero_page
 
-import data
+from data import storage
 
 
 # class TestHeroParser(unittest.TestCase):
@@ -33,11 +33,8 @@ class TestApiParse(unittest.TestCase):
     # def test_parse(self):
     #     print(APIParser(fetch_heroes()).hero_list)
 
-    def test_fetch(self):
-        page = fetch_blizzheroes_page()
-        heroes = APIParser(fetch_heroes()).hero_list
-
-        print(BlizzParser2(heroes, page).bhero_list)
+    def test_parse(self):
+        print(len(storage.BLIZZ_HEROES))
 
 
 if __name__ == '__main__':
