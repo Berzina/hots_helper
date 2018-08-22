@@ -1,4 +1,5 @@
 import random
+import re
 from data.dialogs import CHOOSE
 from data.storage import HAPPY_HEROES, BLIZZ_HEROES
 
@@ -78,3 +79,8 @@ def by_choose(blizzard_heroes, answers):
 
     return blizzard_heroes[:3]
 # damage=5, utility=5, survivability=9, complexity=4
+
+
+# TODO: hardcode range
+def is_cyrillic(text):
+    return bool(re.search('[\u0400-\u04FF]', text))

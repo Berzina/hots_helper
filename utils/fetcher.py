@@ -7,13 +7,24 @@ from threading import Thread, Event
 from selenium import webdriver
 from selenium.webdriver.support.ui import WebDriverWait
 
-from utils.parser import BlizzParser
+# from utils.parser import BlizzParser
 
 HAPPY_URL = 'http://happyzerg.ru/guides/builds'
 STATISTICS_URL = 'https://hots.dog/'
+API_URL = 'http://hotsapi.net/api/v1'
 
 BlizzHero = namedtuple('BlizzHero', ('hero', 'role', 'stats',
                                      'builds'))
+
+
+def fetch_heroes(url=API_URL + "/heroes"):
+    try:
+        r = requests.get(url)
+        response = r.json()
+    except Exception:
+        print('{} is unresponsive'.format(url))
+    else:
+        return response
 
 
 def fetch_statistics():
@@ -35,6 +46,60 @@ def fetch_statistics():
     page = browser.page_source
 
     return page
+
+
+def fetch_blizzhero_page(link):
+    try:
+        options = webdriver.ChromeOptions()
+        options.add_argument('--headless')
+
+        if os.environ.get("CHROME_BIN"):
+            options.binary_location = os.environ.get("CHROME_BIN")
+
+        browser = webdriver.Chrome(options=options,
+                                   executable_path=os.environ.get(
+                                    "CHROME_DRIVER_BIN"))
+
+        browser.get(link)
+
+        WebDriverWait(browser, timeout=10).until(
+            lambda x: x.find_elements_by_xpath('/html/body/div/div[2]/div/div[2]/div[1]/div[2]'))
+        # ... other actions
+        page = browser.page_source
+
+        browser.close()
+
+    except Exception as e:
+        print(e)
+    else:
+        return page
+
+
+def fetch_blizzheroes_page(link='http://blizzardheroes.ru/heroes/'):
+    try:
+        options = webdriver.ChromeOptions()
+        options.add_argument('--headless')
+
+        if os.environ.get("CHROME_BIN"):
+            options.binary_location = os.environ.get("CHROME_BIN")
+
+        browser = webdriver.Chrome(options=options,
+                                   executable_path=os.environ.get(
+                                    "CHROME_DRIVER_BIN"))
+
+        browser.get(link)
+
+        WebDriverWait(browser, timeout=10).until(
+            lambda x: x.find_elements_by_xpath('/html/body/div/div[2]/div/div[2]/div[1]/div[2]/div[2]/div[2]'))
+        # ... other actions
+        page = browser.page_source
+
+        browser.close()
+
+    except Exception as e:
+        print(e)
+    else:
+        return page
 
 
 def fetch_blizz_hero(hero):
