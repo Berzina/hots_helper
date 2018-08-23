@@ -13,11 +13,19 @@ def choose(app, user_id, message):
                                           bhero.hero.stats)
 
         if bhero.hero.image:
-            app.send_photo(
-                user_id,
-                photo=bhero.hero.image,
-                caption=caption
-            )
+            try:
+                app.send_photo(
+                    user_id,
+                    photo=bhero.hero.image,
+                    caption=caption
+                )
+            except Exception as e:
+                print("Can't fetch img: {}.".format(bhero.hero.image))
+                print("Reason: {}".format(e))
+                app.send_message(
+                    user_id,
+                    caption
+                )
         else:
             app.send_message(
                 user_id,
