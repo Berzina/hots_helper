@@ -8,7 +8,7 @@ from pyrogram import (Client, Filters,
 
 import chat
 
-from data import update
+from data import update, storage
 
 import views
 
@@ -80,17 +80,13 @@ def hero_list(client, message):
         views.get_hero_view_by_name(message.text)
     )
 
-    bhero = filters.take_blizz_by_name(message.text)
+    bheroes = filters.take_by_name(storage.BLIZZ_HEROES, message.text)
 
-    if bhero:
+    if len(bheroes) == 1:
+        bhero = bheroes[0]
         for build_idx, build in enumerate(bhero.builds):
             page_content = pages.make_page(bhero, build_idx)
             page_link = pages.send_page(bhero.hero.en_name, page_content)
-
-            # buttons.append([
-            #         InlineKeyboardButton(
-            #             build.name,
-            #             url=page_link)])
 
             app.send_message(
                 message.chat.id,
@@ -104,6 +100,7 @@ if __name__ == '__main__':
                                         and update data.')
     parser.add_argument('--update', action='store_true')
     parser.add_argument('--updatemissing', action='store_true')
+    parser.add_argument('--updateconcrete', nargs='+')
 
     args = parser.parse_args()
 
@@ -111,5 +108,7 @@ if __name__ == '__main__':
         update.update_all()
     elif args.updatemissing:
         update.update_missing()
+    elif args.updateconcrete:
+        update.update_concrete(args.updateconcrete)
     else:
         app.run()

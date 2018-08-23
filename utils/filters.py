@@ -21,10 +21,12 @@ def take_by_name(bheroes, name):
 
 
 def by_role(blizzard_heroes, role):
-    return [bhero for bhero in blizzard_heroes if bhero.hero.role == role]
+    return [bhero for bhero in blizzard_heroes
+            if bhero.hero.role.lower() == role]
 
 
 def by_choose(blizzard_heroes, answers):
+
     ROLE_MAPPING = CHOOSE['questions'][1]['a']
     STATS = ('damage', 'utility', 'survivability',
              'complexity')

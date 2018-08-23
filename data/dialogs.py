@@ -30,7 +30,7 @@ release your rage? ^^""",
                                 {'q': """
 Well do you want to show your incredible
 skills? It's no problem if not,
-play lazy, friend ^^.""",
+play lazy, friend ^^""",
                                  'a': CLASSIC_ANSWERS}])
                         },
           'lenreq': 6,

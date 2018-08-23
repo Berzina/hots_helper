@@ -5,7 +5,8 @@ from utils import dialogue
 
 def send_message(app, user_id, dialog_name, reply_cntr, phrase_idx):
 
-    response = dialogue.listen(app, user_id, dialog_name, reply_cntr, phrase_idx)
+    response = dialogue.listen(app, user_id, dialog_name,
+                               reply_cntr, phrase_idx)
 
     if response["ok"]:
         response = response["message"]

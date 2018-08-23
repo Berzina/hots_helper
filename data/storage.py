@@ -47,7 +47,8 @@ def set_blizz(blizz_heroes: list, replace=True):
         for blizz_hero in blizz_heroes:
             founded = False
             for idx, item in enumerate(BLIZZ_HEROES):
-                if item.hero.name == blizz_hero.hero.name:
+                if item.hero.ru_name == blizz_hero.hero.ru_name\
+                  or item.hero.en_name == blizz_hero.hero.en_name:
                     founded = True
                     BLIZZ_HEROES[idx] = blizz_hero
 
@@ -59,6 +60,12 @@ def set_blizz(blizz_heroes: list, replace=True):
 
     with open(BLIZZ_FILE, 'wb') as fp:
         pickle.dump(BLIZZ_HEROES, fp, fix_imports=True)
+
+    print("\nAdded heroes: \n{}\nwas loaded to bin.\n".format(", ".join(
+        [bhero.hero.name for bhero in blizz_heroes])))
+
+    print("\nAll heroes: \n{}\nwas loaded to bin.\n".format(", ".join(
+        [bhero.hero.name for bhero in BLIZZ_HEROES])))
 
 
 init()

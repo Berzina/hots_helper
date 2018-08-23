@@ -14,7 +14,8 @@ telegraph.create_account(short_name=MY_NAME)
 def make_page(blizzard_hero, build_idx):
     rows = ''
     for talent in blizzard_hero.builds[build_idx].talents:
-        rows += page_pattern.ROW_PATTERN.format(talent=talent)
+        rows += page_pattern.ROW_PATTERN.format(talent=talent,
+                                                talent_level_emodji=page_pattern.EMODJI_NUMBER_MAPPING[int(talent.level)])
 
     return page_pattern.PAGE.format(hero=blizzard_hero.hero,
                                     bhero=blizzard_hero,

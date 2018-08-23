@@ -1,37 +1,7 @@
-STYLES = """
-<style type="text/css">
-
-  body {{font-family: "Open Sans",sans-serif;}}
-
-  h1 {{margin-bottom: 5pt;}}
-  h2 {{margin-top: 26pt;}}
-
-  #main-table {{max-width: 540px;
-               table-layout: fixed;
-               text-align:center;}}
-
-
-  #main-table tr:nth-child(2n) {{background: #f0f0f0;}}
-
-  #main-table tr:nth-child(1) {{background: #666;
-                               color: #fff;}}
-
-  #main-table td:nth-child(4) {{width: 65%;}}
-
-  #stats {{font-style: italic;
-          margin-top: 12pt;}}
-
-  .talent_name {{font-style: italic;
-                font-size: 11pt;
-                color: green}}
-</style>
-"""
-
 ROW_PATTERN = """
 <p>
-  <code><strong>{talent.level}</strong>|<strong>{talent.idx}</strong>|<strong>{talent.name}</strong><br/>
-  ----------------------------</code>
-  <figure> <img src="http://blizzardheroes.ru{talent.img}"/>
+  <blockquote>{talent.level} -- {talent.name}</blockquote>
+  <figure> <img src="{talent.img}"/>
     <figcaption>
       <i>{talent.descr}</i>
     </figcaption>
@@ -40,9 +10,9 @@ ROW_PATTERN = """
 """
 
 PAGE = """
-  <figure> <img src="http://happyzerg.ru{hero.image}"/>
+  <figure> <img src="{hero.image}"/>
     <figcaption>
-      <i>{bhero.stats}</i>
+      <i>{hero.stats}</i>
     </figcaption>
   </figure>
 
@@ -51,3 +21,19 @@ PAGE = """
   {rows}
 
 """
+
+EMODJI_NUMBER_MAPPING = {
+  1: '1️⃣',
+  3: '3️⃣',
+  4: '4️⃣',
+  6: '6️⃣',
+  7: '7️⃣',
+  9: '9️⃣',
+  10: '1️⃣0️⃣',
+  12: '1️⃣2️⃣',
+  13: '1️⃣3️⃣',
+  15: '1️⃣5️⃣',
+  16: '1️⃣6️⃣',
+  19: '1️⃣9️⃣',
+  20: '2️⃣0️⃣'
+}

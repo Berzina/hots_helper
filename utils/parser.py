@@ -7,8 +7,6 @@ from utils.filters import get_cyrillic, get_cyrillic_str
 
 from utils.fetcher import fetch_blizzhero_page
 
-from data.storage import set_blizz, get_blizz
-
 ApiHero = namedtuple('ApiHero', ('name', 'ru_name', 'en_name', 'image',
                                  'role', 'type'))
 
@@ -38,11 +36,14 @@ class APIParser:
         for hero in self.json:
             ru_name = get_cyrillic(hero["translations"])
 
-            self.hero_list.append(
-                ApiHero("{ru_name} ({en_name})"
-                        .format(ru_name=ru_name.capitalize(),
-                                en_name=hero["name"]),
+            name = "{ru_name} ({en_name})"\
+                   .format(ru_name=ru_name.capitalize(),
+                           en_name=hero["name"])\
+                   if ru_name\
+                   else hero["name"]
 
+            self.hero_list.append(
+                ApiHero(name,
                         ru_name.capitalize(),
                         hero["name"],
                         list(hero["icon_url"].values())[0],
@@ -53,42 +54,14 @@ class APIParser:
 class BlizzParser:
     BLIZZHERO_URL = 'http://blizzardheroes.ru'
 
-    def __init__(self, hero_list=[], page=None, update_on_loading=False):
+    def __init__(self, hero_list=[], page=None):
         self.hero_list = []
         self.bhero_list = []
         self.heroes = hero_list
         self.page = page
-        self.update_on_loading = update_on_loading
 
         if hero_list and page:
-            self.parse()
-
-    def parse(self):
-        self.parse_main()
-
-        for hero in self.hero_list:
-
-            one_hero, its_builds = self.parse_hero_page(hero)
-            blizz_hero = BlizzHero(one_hero, builds=[])
-
-            for build in its_builds:
-                talents = self.parse_talents_page(build.link)
-                build = Build(**{**build._asdict(), **{'talents': talents}})
-
-                blizz_hero.builds.append(build)
-
-                if self.update_on_loading:
-                    set_blizz([blizz_hero], replace=False)
-                    print("Saved to bin: {}".format(blizz_hero.hero.name))
-                    print("in bin now: {}"
-                          .format(" ".join([bhero.hero.name
-                                            for bhero in get_blizz()])))
-
-            self.bhero_list.append(blizz_hero)
-
-            print("Loaded: {}".format(blizz_hero.hero.name))
-
-        return self.bhero_list
+            self.parse_main()
 
     def parse_main(self):
         stats = Stats(0, 0, 0, 0)
@@ -110,7 +83,7 @@ class BlizzParser:
             else:
                 search_name = ru_name
 
-            hero_block = soup.find('a', {'data-name': ru_name})
+            hero_block = soup.find('a', {'data-name': search_name})
 
             if hero_block:
 
@@ -122,6 +95,43 @@ class BlizzParser:
                          universe=universe,
                          blizz_link=self.BLIZZHERO_URL + link,
                          stats=stats))
+
+    def get_hero(self, name):
+        for hero in self.hero_list:
+
+            if hero.name == name \
+              or hero.ru_name == name \
+              or hero.en_name == name:
+
+                return hero
+        return None
+
+    def parse_bhero_list(self):
+        for hero in self.hero_list:
+            self.bhero_list.append(self.parse_bhero(hero))
+
+        return self.bhero_list
+
+    def parse_bhero(self, hero):
+
+        one_hero, its_builds = self.parse_hero_page(hero)
+        blizz_hero = BlizzHero(one_hero, builds=[])
+
+        for build in its_builds:
+            talents = self.parse_talents_page(build.link)
+            build = Build(**{**build._asdict(), **{'talents': talents}})
+
+            blizz_hero.builds.append(build)
+
+        return blizz_hero
+
+    def parse_bhero_by_name(self, name):
+        hero = self.get_hero(name)
+
+        if hero:
+            return self.parse_bhero(hero)
+        else:
+            print("Can't find hero for: '{}'".format(name))
 
     def parse_hero_page(self, hero):
         page = fetch_blizzhero_page(hero.blizz_link)
@@ -165,16 +175,18 @@ class BlizzParser:
 
         guide_block = bs_obj.find('div', {'class': 'guides-list'})
 
-        guide_blocks = guide_block.find_all('a')
+        if guide_block:
 
-        guide_blocks = guide_blocks if len(guide_blocks) <= 2 \
-                                    else guide_blocks[:2]
+            guide_blocks = guide_block.find_all('a')
 
-        for block in guide_blocks:
-            name = block.find('div', {'class': 'title'}).text
-            link = self.BLIZZHERO_URL + block.get('href', "")
+            guide_blocks = guide_blocks if len(guide_blocks) <= 2 \
+                                        else guide_blocks[:2]
 
-            builds.append(Build(name, [], link))
+            for block in guide_blocks:
+                name = block.find('div', {'class': 'title'}).text
+                link = self.BLIZZHERO_URL + block.get('href', "")
+
+                builds.append(Build(name, [], link))
 
         return builds
 

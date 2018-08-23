@@ -3,13 +3,13 @@ from utils.filters import take_by_name
 
 
 def get_hero_view_by_name(name):
-    some_heroes = take_by_name(HAPPY_HEROES, name)
+    some_heroes = take_by_name(BLIZZ_HEROES, name)
 
     if not some_heroes:
-        return 'Found no heroes for you :( Is {} hero name correct?'\
+        return 'Found no heroes for you :( Is "{} hero name correct?'\
                .format(name)
     elif len(some_heroes) == 1:
-        return open_build(bh)
+        return open_build(some_heroes[0])
     else:
         return link_build(some_heroes)
 
@@ -20,13 +20,12 @@ def open_build(bh):
 * __{}__
 ```
 ---------------
- lvl  | talent
-      | idx
+ lvl | talent
+     | name
 ---------------```'''
 
     builds_table = '''```
-{:^6}|{:^8}
-{}
+{:^5}|{}
 ---------------```
 '''
 
@@ -36,7 +35,7 @@ def open_build(bh):
         build_full_table += builds_header.format(build.name)
 
         for talent in build.talents:
-            build_full_table += builds_table.format(talent.level, talent.idx,
+            build_full_table += builds_table.format(talent.level,
                                                     talent.name)
 
         build_full_table += '\n'
@@ -64,11 +63,13 @@ __Builds:__
 
 
 '''\
-.format(name=hero.name,
+.format(name=hero.hero.name,
         blist='\n'.join(['* {bname}: {blink}'
                          .format(bname=build.name,
                                  blink=build.link)
-                         for build in hero.build_refs]))
+                         for build in hero.builds]))
+
+    return response
 
 
 def responce_form(user_id, answers):

@@ -43,6 +43,7 @@ def listen(app, user_id, dialog_name, reply_cntr, phrase_idx):
                 bye(user_id,
                     active_dialog.callback(app, user_id,
                                            active_dialog.incoming))
+                return {"ok": False, "message": "That's all folks!"}
         else:
             return {"ok": False, "message": "Dunno what you want to do."}
     else:
@@ -92,6 +93,3 @@ def get_next_reply_cntr(user_id, reply_cntr):
                 next_idx = i + 1
 
     return next_idx
-
-
-
