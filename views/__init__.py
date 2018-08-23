@@ -1,3 +1,6 @@
+from pyrogram.api.types import (InputBotInlineResult,
+                                InputBotInlineMessageText)
+
 from data.storage import BLIZZ_HEROES
 from utils.filters import take_by_name
 
@@ -84,3 +87,23 @@ def responce_form(user_id, answers):
             response += '{}: {}\n'.format(field['q'], field['a'][answer])
 
     return response
+
+
+def get_inline_results(query):
+    results = []
+
+    some_heroes = take_by_name(BLIZZ_HEROES, query)[:5]
+
+    for idx, bhero in enumerate(some_heroes):
+        results.append(
+            InputBotInlineResult(
+                        id=str(idx),
+                        type='article',
+                        send_message=InputBotInlineMessageText(
+                           bhero.hero.en_name),
+                        title=bhero.hero.name,
+                        description='{hero.role}\n{hero.stats}'.format(
+                            hero=bhero.hero)
+            ))
+
+    return results

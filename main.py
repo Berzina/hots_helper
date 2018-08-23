@@ -6,6 +6,15 @@ from pyrogram import (Client, Filters,
                       ReplyKeyboardMarkup,
                       InlineKeyboardMarkup, InlineKeyboardButton)
 
+from pyrogram.api.types import (BotInlineMessageText,
+                                MessageEntityBotCommand,
+                                InputBotInlineResult,
+                                InputBotInlineMessageText,
+                                UpdateBotInlineQuery)
+
+from pyrogram.api.functions.messages import (SendInlineBotResult,
+                                             SetInlineBotResults)
+
 import chat
 
 from data import update, storage
@@ -30,6 +39,22 @@ Hello! I can just teach you how to play a hero
 sending you some talents.
 
 Just send me hero name :)''')
+
+
+@app.on_raw_update()
+def raw(client, update, users, chats):
+    if isinstance(update, UpdateBotInlineQuery):
+
+        print("User '{}' sent: '{}'".format(update.user_id, update.query))
+
+        results = views.get_inline_results(update.query)
+
+        if results:
+            app.send(SetInlineBotResults(
+                        update.query_id,
+                        results=results,
+                        cache_time=86400
+                     ))
 
 
 @app.on_message(Filters.command(["chooseforme", "cfm"]))
