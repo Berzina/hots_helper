@@ -2,14 +2,13 @@ import os
 import requests
 import time
 from collections import namedtuple
-from functools import singledispatch
+from functools import partial
 from threading import Thread, Event
 from selenium import webdriver
 from selenium.webdriver.support.ui import WebDriverWait
 
-# from utils.parser import BlizzParser
 
-STATISTICS_URL = 'https://hots.dog/'
+STATISTICS_URL = 'https://hots.dog/api'
 API_URL = 'http://hotsapi.net/api/v1'
 BLIZZHERO_URL = 'http://blizzardheroes.ru'
 
@@ -17,35 +16,18 @@ BlizzHero = namedtuple('BlizzHero', ('hero', 'role', 'stats',
                                      'builds'))
 
 
-def fetch_heroes(url=API_URL + "/heroes"):
+def basic_fetch(url, appendix='', params={}):
     try:
-        r = requests.get(url)
+        r = requests.get(url + appendix, params=params)
         response = r.json()
     except Exception:
-        print('{} is unresponsive'.format(url))
+        print('{} is unresponsive'.format(url + appendix))
     else:
         return response
 
 
-def fetch_statistics():
-    options = webdriver.ChromeOptions()
-    options.add_argument('--headless')
-
-    if os.environ.get("CHROME_BIN"):
-        options.binary_location = os.environ.get("CHROME_BIN")
-
-    browser = webdriver.Chrome(options=options,
-                               executable_path=os.environ.get(
-                                "CHROME_DRIVER_BIN"))
-
-    browser.get(STATISTICS_URL)
-
-    WebDriverWait(browser, timeout=10).until(
-        lambda x: x.find_elements_by_xpath('//*[@id="root"]/main/section'))
-
-    page = browser.page_source
-
-    return page
+fetch_heroes = partial(basic_fetch, API_URL, "/heroes")
+fetch_hotsdog = partial(basic_fetch, STATISTICS_URL)
 
 
 def fetch_blizzhero_page(link=BLIZZHERO_URL + '/heroes'):

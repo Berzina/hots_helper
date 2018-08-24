@@ -18,9 +18,12 @@ def echo(app, user_id, message):
 
 def send_hero_profile(app, user_id, bhero):
     from views import represent_stats
+    from utils.statistics import fetch_hero_stata
 
-    caption = '**{}**\n```{}```'.format(bhero.hero.name,
-                                        represent_stats(bhero.hero.stats))
+    caption = '**{}**\n__Winrate:{}%__\n```{}```'\
+              .format(bhero.hero.name,
+                      fetch_hero_stata(bhero.hero.en_name).get('percent', '?'),
+                      represent_stats(bhero.hero.stats))
 
     if bhero.hero.image:
         try:
