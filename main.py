@@ -102,7 +102,7 @@ def callback(client, message):
 def hero_list(client, message):
     client.send_message(
         message.chat.id,
-        views.get_hero_view_by_name(message.text)
+        **views.make_view(views.get_hero_view_by_name, message.text)
     )
 
     bheroes = filters.take_by_name(storage.BLIZZ_HEROES, message.text)

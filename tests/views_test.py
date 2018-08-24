@@ -13,13 +13,31 @@ class TestFilter(unittest.TestCase):
                           3: 1, 4: 2, 5: 0}
 
     def test_view(self):
-        print(views.get_hero_view_by_name('Арт'))
+        view = views.make_view(views.get_hero_view_by_name,
+                               'Арт')
+
+        def fun(text, reply_markup=None):
+            print(text)
+
+        fun(**view)
 
     def test_view2(self):
-        print(views.get_hero_view_by_name('Артанис'))
+        view = views.make_view(views.get_hero_view_by_name,
+                               'Артанис')
+
+        def fun(text, reply_markup=None):
+            print(text)
+
+        fun(**view)
 
     def test_view3(self):
-        print(views.get_hero_view_by_name('Хуйня'))
+        view = views.make_view(views.get_hero_view_by_name,
+                               'Хуйня')
+
+        def fun(text, reply_markup=None):
+            print(text)
+
+        fun(**view)
 
 
 if __name__ == '__main__':

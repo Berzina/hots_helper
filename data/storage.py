@@ -19,8 +19,8 @@ BLIZZ_HEROES = []
 
 def init():
     get_blizz()
-    for bhero in BLIZZ_HEROES:
-        print(bhero.hero.name)
+    # for bhero in BLIZZ_HEROES:
+    #     print(bhero.hero.name)
 
 
 def get_blizz():

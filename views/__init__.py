@@ -1,20 +1,49 @@
+from collections import namedtuple
+
 from pyrogram.api.types import (InputBotInlineResult,
                                 InputBotInlineMessageText)
 
 from data.storage import BLIZZ_HEROES
 from utils.filters import take_by_name
 
+View = namedtuple('View', ('view'))
+Message = namedtuple('Message', ('type', 'message'))
+Markup = namedtuple('Markup', ('type', 'message', 'markup'))
+
+
+def make_view(construct_method, *params):
+    view = construct_method(*params)
+
+    if view.view.type == 'message':
+        send_this = {'text': view.view.message}
+    elif view.view.type == 'markup':
+        send_this = {'text': view.view.message,
+                     'reply_markup': view.view.markup}
+    else:
+        raise Exception('Unknown view type.')
+
+    return send_this
+
 
 def get_hero_view_by_name(name):
     some_heroes = take_by_name(BLIZZ_HEROES, name)
 
     if not some_heroes:
-        return 'Found no heroes for you :( Is "{} hero name correct?'\
-               .format(name)
+        message = 'Found no heroes for you :( Is "{}" hero name correct?'\
+                  .format(name)
+
+        view = View(Message('message',
+                            message))
+
     elif len(some_heroes) == 1:
-        return open_build(some_heroes[0])
+
+        view = View(Message('message',
+                            open_build(some_heroes[0])))
     else:
-        return link_build(some_heroes)
+        view = View(Message('message',
+                            link_build(some_heroes)))
+
+    return view
 
 
 def open_build(bh):
