@@ -160,9 +160,16 @@ def represent_stats(stats):
                      'survivability': 'surv',
                      'complexity': 'cmplx'}
 
-    return '\n'.join(['{stat_name:<5} {stat_repr}'
-                      .format(
-                        stat_name=stats_mapping[stat_name],
-                        stat_repr='+'*stat_value
-                      )
-                      for stat_name, stat_value in stats._asdict().items()])
+    stats_dict = [('{:<5}'.format(stats_mapping[stat_name]),
+                   ' '*(10-stat_value) + '+'*stat_value)
+                  for stat_name, stat_value in stats._asdict().items()]
+
+    represent = []
+
+    for idx, stat_part in enumerate(['stats_names', 'stats_values']):
+        arr = [stat[idx] for stat in stats_dict]
+        transposed = [' '.join(value_row) for value_row
+                      in list(map(list, zip(*arr)))]
+        represent.append('\n'.join(transposed))
+
+    return '\n-------\n'.join(represent[::-1])

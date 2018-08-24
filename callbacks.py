@@ -10,8 +10,8 @@ def choose(app, user_id, message):
     #                                             for bhero in bheroes]))
 
     for bhero in bheroes:
-        caption = '**{}**\n{}'.format(bhero.hero.name,
-                                      represent_stats(bhero.hero.stats))
+        caption = '**{}**\n```{}```'.format(bhero.hero.name,
+                                            represent_stats(bhero.hero.stats))
 
         if bhero.hero.image:
             try:
