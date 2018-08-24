@@ -1,6 +1,7 @@
 def choose(app, user_id, message):
     from utils import filters
     from data.storage import BLIZZ_HEROES
+    from views import represent_stats
 
     bheroes = filters.by_choose(BLIZZ_HEROES, message)
 
@@ -9,8 +10,8 @@ def choose(app, user_id, message):
     #                                             for bhero in bheroes]))
 
     for bhero in bheroes:
-        caption = '**{}**__({})__'.format(bhero.hero.name,
-                                          bhero.hero.stats)
+        caption = '**{}**\n{}'.format(bhero.hero.name,
+                                      represent_stats(bhero.hero.stats))
 
         if bhero.hero.image:
             try:

@@ -152,3 +152,17 @@ def get_inline_results(query):
             ))
 
     return results
+
+
+def represent_stats(stats):
+    stats_mapping = {'damage': 'dmg',
+                     'utility': 'util',
+                     'survivability': 'surv',
+                     'complexity': 'cmplx'}
+
+    return '\n'.join(['{stat_name:<5} {stat_repr}'
+                      .format(
+                        stat_name=stats_mapping[stat_name],
+                        stat_repr='+'*stat_value
+                      )
+                      for stat_name, stat_value in stats._asdict().items()])

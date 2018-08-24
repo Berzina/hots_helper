@@ -40,6 +40,10 @@ class TestFilter(unittest.TestCase):
 
         fun(**view)
 
+    def test_stats(self):
+        hero = filters.take_by_name(BLIZZ_HEROES, 'Артас')[0]
+        print(views.represent_stats(hero.hero.stats))
+
 
 if __name__ == '__main__':
     unittest.main()
