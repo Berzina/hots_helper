@@ -88,10 +88,9 @@ def callback(client, message):
         raise Exception("Unknown query: '{}'.".format(message.data))
 
     if query_type == "plain_text":
-        app.send_message(
-            message.from_user.id,
-            **views.make_view(views.get_hero_view_by_name, message.data)
-        )
+
+        send_hero(message.from_user.id, message.data)
+
     elif query_type == "dialog":
 
         dialog_name, reply_cntr, phrase_idx = tokens
@@ -118,12 +117,16 @@ def callback(client, message):
 
 @app.on_message()
 def hero_list(client, message):
-    client.send_message(
-        message.chat.id,
-        **views.make_view(views.get_hero_view_by_name, message.text)
+    send_hero(message.chat.id, message.text)
+
+
+def send_hero(user_id, in_message):
+    app.send_message(
+        user_id,
+        **views.make_view(views.get_hero_view_by_name, in_message)
     )
 
-    bheroes = filters.take_by_name(storage.BLIZZ_HEROES, message.text)
+    bheroes = filters.take_by_name(storage.BLIZZ_HEROES, in_message)
 
     if len(bheroes) == 1:
         bhero = bheroes[0]
@@ -132,7 +135,7 @@ def hero_list(client, message):
             page_link = pages.send_page(bhero.hero.en_name, page_content)
 
             app.send_message(
-                message.chat.id,
+                user_id,
                 page_link
             )
 
