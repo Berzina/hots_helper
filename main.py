@@ -78,24 +78,42 @@ def choose_for_me(client, message):
 @app.on_callback_query()
 def callback(client, message):
 
-    dialog_name, reply_cntr, phrase_idx = message.data.split("_")
-    reply_cntr, phrase_idx = int(reply_cntr), int(phrase_idx)
+    tokens = message.data.split("_")
 
-    if reply_cntr == 0:
-
-        if phrase_idx == 1:
-            chat.start(app, message.from_user.id, dialog_name)
-        elif phrase_idx == 0:
-            app.send_message(
-                message.from_user.id,
-                "KK see you next time ^^"
-            )
-        else:
-            print("Unknown error.")
-
+    if len(tokens) == 1:
+        query_type = "plain_text"
+    elif len(tokens) == 3:
+        query_type = "dialog"
     else:
-        chat.send_message(app, message.from_user.id, dialog_name, reply_cntr,
-                          phrase_idx)
+        raise Exception("Unknown query: '{}'.".format(message.data))
+
+    if query_type == "plain_text":
+        app.send_message(
+            message.from_user.id,
+            **views.make_view(views.get_hero_view_by_name, message.data)
+        )
+    elif query_type == "dialog":
+
+        dialog_name, reply_cntr, phrase_idx = tokens
+        reply_cntr, phrase_idx = int(reply_cntr), int(phrase_idx)
+
+        if reply_cntr == 0:
+
+            if phrase_idx == 1:
+                chat.start(app, message.from_user.id, dialog_name)
+            elif phrase_idx == 0:
+                app.send_message(
+                    message.from_user.id,
+                    "KK see you next time ^^"
+                )
+            else:
+                print("Unknown error.")
+
+        else:
+            chat.send_message(app, message.from_user.id, dialog_name,
+                              reply_cntr, phrase_idx)
+    else:
+        raise Exception("Unknown query type: '{}'.".format(query_type))
 
 
 @app.on_message()

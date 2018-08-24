@@ -18,6 +18,7 @@ class TestFilter(unittest.TestCase):
 
         def fun(text, reply_markup=None):
             print(text)
+            print(reply_markup)
 
         fun(**view)
 

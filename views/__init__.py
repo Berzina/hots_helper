@@ -3,6 +3,8 @@ from collections import namedtuple
 from pyrogram.api.types import (InputBotInlineResult,
                                 InputBotInlineMessageText)
 
+from pyrogram import (InlineKeyboardMarkup, InlineKeyboardButton)
+
 from data.storage import BLIZZ_HEROES
 from utils.filters import take_by_name
 
@@ -40,10 +42,24 @@ def get_hero_view_by_name(name):
         view = View(Message('message',
                             open_build(some_heroes[0])))
     else:
-        view = View(Message('message',
-                            link_build(some_heroes)))
+        view = View(Markup('markup',
+                           'Please choose one:',
+                           get_hero_variant_buttons(some_heroes)))
 
     return view
+
+
+def get_hero_variant_buttons(some_heroes):
+    some_heroes = some_heroes[:5]
+
+    buttons = []
+
+    for bhero in some_heroes:
+        buttons.append([InlineKeyboardButton(
+                            bhero.hero.name,
+                            callback_data=bhero.hero.en_name)])
+
+    return InlineKeyboardMarkup(buttons)
 
 
 def open_build(bh):
