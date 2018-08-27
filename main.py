@@ -121,10 +121,7 @@ def hero_list(client, message):
 
 
 def send_hero(user_id, in_message):
-    app.send_message(
-        user_id,
-        **views.make_view(views.get_hero_view_by_name, in_message)
-    )
+    views.send_view(app, user_id, views.get_hero_profile, in_message)
 
     bheroes = filters.take_by_name(storage.BLIZZ_HEROES, in_message)
 

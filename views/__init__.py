@@ -6,28 +6,47 @@ from pyrogram.api.types import (InputBotInlineResult,
 from pyrogram import (InlineKeyboardMarkup, InlineKeyboardButton)
 
 from data.storage import BLIZZ_HEROES
+
 from utils.filters import take_by_name
+from utils.statistics import fetch_hero_stata
+from utils.exceptions import *
 
 View = namedtuple('View', ('view'))
 Message = namedtuple('Message', ('type', 'message'))
 Markup = namedtuple('Markup', ('type', 'message', 'markup'))
+Photo = namedtuple('Photo', ('type', 'photo', 'caption'))
 
 
-def make_view(construct_method, *params):
-    view = construct_method(*params)
+def send_view(app, user_id, construct_method, *params):
+    send_this = construct_method(*params)
 
-    if view.view.type == 'message':
-        send_this = {'text': view.view.message}
-    elif view.view.type == 'markup':
-        send_this = {'text': view.view.message,
-                     'reply_markup': view.view.markup}
+    if send_this.view.type == 'message':
+        app.send_message(user_id,
+                         send_this.view.message)
+
+    elif send_this.view.type == 'markup':
+        app.send_message(user_id,
+                         send_this.view.message,
+                         reply_markup=send_this.view.markup)
+
+    elif send_this.view.type == 'photo':
+        try:
+            app.send_photo(
+                user_id,
+                photo=send_this.view.photo,
+                caption=send_this.view.caption
+            )
+        except Exception as e:
+            print(e)
+            app.send_message(
+                user_id,
+                send_this.view.caption
+            )
     else:
-        raise Exception('Unknown view type.')
-
-    return send_this
+        raise Exception("Unknown view type.")
 
 
-def get_hero_view_by_name(name):
+def get_hero_profile(name):
     some_heroes = take_by_name(BLIZZ_HEROES, name)
 
     if not some_heroes:
@@ -38,9 +57,23 @@ def get_hero_view_by_name(name):
                             message))
 
     elif len(some_heroes) == 1:
+        bhero = some_heroes[0]
 
-        view = View(Message('message',
-                            open_build(some_heroes[0])))
+        caption = '**{}**\n__Winrate:{}%__\n```{}```'\
+                  .format(bhero.hero.name,
+
+                          fetch_hero_stata(bhero.hero.en_name)
+                          .get('percent', '?'),
+
+                          represent_stats(bhero.hero.stats))
+
+        if bhero.hero.image:
+            view = View(Photo('photo',
+                              bhero.hero.image,
+                              caption))
+        else:
+            view = View(Message('message',
+                                caption))
     else:
         view = View(Markup('markup',
                            'Please choose one:',

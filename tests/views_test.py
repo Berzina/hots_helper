@@ -13,32 +13,16 @@ class TestFilter(unittest.TestCase):
                           3: 1, 4: 2, 5: 0}
 
     def test_view(self):
-        view = views.make_view(views.get_hero_view_by_name,
-                               'Арт')
-
-        def fun(text, reply_markup=None):
-            print(text)
-            print(reply_markup)
-
-        fun(**view)
+        view = views.get_hero_profile('Арт')
+        print(view)
 
     def test_view2(self):
-        view = views.make_view(views.get_hero_view_by_name,
-                               'Артанис')
-
-        def fun(text, reply_markup=None):
-            print(text)
-
-        fun(**view)
+        view = views.get_hero_profile('Артанис')
+        print(view)
 
     def test_view3(self):
-        view = views.make_view(views.get_hero_view_by_name,
-                               'Хуйня')
-
-        def fun(text, reply_markup=None):
-            print(text)
-
-        fun(**view)
+        view = views.get_hero_profile('Хуйня')
+        print(view)
 
     def test_stats(self):
         hero = filters.take_by_name(BLIZZ_HEROES, 'Артас')[0]
