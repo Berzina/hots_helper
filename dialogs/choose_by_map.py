@@ -150,8 +150,6 @@ class ChooseByMap(IDialog):
         return 'choosing role' in self.answers
 
     def is_role_changed(self):
-        print(self.old_answers.get("choosing role"))
-        print(self.answers.get("choosing role"))
         return self.old_answers.get("choosing role") \
                != self.answers.get("choosing role")
 
@@ -236,7 +234,7 @@ class ChooseByMap(IDialog):
     def get_heroes(self):
 
         print("Getting heroes...")
-        print("Result prapared? {}".format(self.result_prepared))
+        print(f"Result prapared? {self.result_prepared}")
 
         if not self.result_prepared:
             print("Preparing results...")

@@ -36,9 +36,7 @@ class APIParser:
         for hero in self.json:
             ru_name = get_cyrillic(hero["translations"])
 
-            name = "{ru_name} ({en_name})"\
-                   .format(ru_name=ru_name.capitalize(),
-                           en_name=hero["name"])\
+            name = f"{ru_name.capitalize()} ({hero['name']})" \
                    if ru_name\
                    else hero["name"]
 
@@ -131,7 +129,7 @@ class BlizzParser:
         if hero:
             return self.parse_bhero(hero)
         else:
-            print("Can't find hero for: '{}'".format(name))
+            print(f"Can't find hero for: '{name}'")
 
     def parse_hero_page(self, hero):
         page = fetch_blizzhero_page(hero.blizz_link)

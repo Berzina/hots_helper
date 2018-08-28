@@ -46,7 +46,7 @@ Just send me hero name :)''')
 def raw(client, update, users, chats):
     if isinstance(update, UpdateBotInlineQuery):
 
-        print("User '{}' sent: '{}'".format(update.user_id, update.query))
+        print(f"User '{update.user_id}' sent: '{update.query}'")
 
         results = views.get_inline_results(update.query)
 
@@ -98,7 +98,7 @@ def callback(client, message):
     elif len(tokens) == 3:
         query_type = "dialog"
     else:
-        raise Exception("Unknown query: '{}'.".format(message.data))
+        raise Exception(f"Unknown query: '{message.data}'.")
 
     if query_type == "plain_text":
 
@@ -127,7 +127,7 @@ def callback(client, message):
     elif query_type == 'idialog':
         ichat.receive(app, message.id, message.from_user.id, message.data)
     else:
-        raise Exception("Unknown query type: '{}'.".format(query_type))
+        raise Exception(f"Unknown query type: '{query_type}'.")
 
 
 @app.on_message()

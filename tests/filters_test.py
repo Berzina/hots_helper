@@ -43,8 +43,7 @@ class TestFilter(unittest.TestCase):
 
         map_idx = input("Choose map:\n{}\n"
                         .format("\n"
-                                .join(["{}: {}"
-                                       .format(idx, map_name)
+                                .join([f"{idx}: {map_name}"
                                        for idx, map_name
                                        in enumerate(init_data["maps"])])))
 

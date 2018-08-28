@@ -21,7 +21,7 @@ def basic_fetch(url, appendix='', params={}):
         r = requests.get(url + appendix, params=params)
         response = r.json()
     except Exception:
-        print('{} is unresponsive'.format(url + appendix))
+        print(f'{url + appendix} is unresponsive')
     else:
         return response
 

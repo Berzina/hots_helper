@@ -32,10 +32,7 @@ def generate_buttons(dialog_name, new_reply_cntr, variants):
     button_row = []
 
     for variant_idx, variant in variants.items():
-        callback_data = "{dialog}_{reply_cntr}_{phrase_idx}"\
-                        .format(dialog=dialog_name,
-                                reply_cntr=new_reply_cntr,
-                                phrase_idx=variant_idx)
+        callback_data = f"{dialog_name}_{new_reply_cntr}_{variant_idx}"
 
         if len(button_row) == 2:
             buttons.append(button_row.copy())

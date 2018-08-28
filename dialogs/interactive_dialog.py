@@ -25,7 +25,7 @@ class IDialog:
         self.result_prepared = False
 
     def send_survey(self):
-        print("\nState before triggering: {}".format(self.state))
+        print(f"\nState before triggering: {self.state}")
 
         q = self.dialog[self.state]["q"]
         ans = self.dialog[self.state]["a"]
@@ -43,7 +43,7 @@ class IDialog:
 
         self.old_answers = self.answers.copy()
 
-        print("\nCurrent state: {}".format(self.state))
+        print(f"\nCurrent state: {self.state}")
 
         answer = int(given_answer)
 
@@ -66,8 +66,8 @@ class IDialog:
             if self.next_trigger == 'bye':
                 self.trigger('bye')
 
-            print("\nOld answers: {}".format(self.old_answers))
-            print("\nAnswers: {}".format(self.answers))
+            print(f"\nOld answers: {self.old_answers}")
+            print(f"\nAnswers: {self.answers}")
 
         self.send_back = []
 
@@ -78,12 +78,11 @@ class IDialog:
         button_row = []
 
         for variant_idx, variant in enumerate(variants):
+
             if type(variant) == dict:
                 variant = variant["text"]
-            callback_data = "{dialog}-{trigger}-{phrase_idx}"\
-                            .format(dialog=dialog_name,
-                                    trigger=trigger,
-                                    phrase_idx=variant_idx + 1)
+
+            callback_data = f"{dialog_name}-{trigger}-{variant_idx + 1}"
 
             if len(button_row) == 2:
                 buttons.append(button_row.copy())
@@ -98,10 +97,7 @@ class IDialog:
 
         if trigger != 'exited':
 
-            end_data = "{dialog}-{trigger}-{phrase_idx}"\
-                       .format(dialog=dialog_name,
-                               trigger='bye',
-                               phrase_idx=0)
+            end_data = f"{dialog_name}-bye-0"
 
             buttons.append([InlineKeyboardButton(
                             "Exit",

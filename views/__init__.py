@@ -50,8 +50,7 @@ def get_hero_profile(name):
     some_heroes = take_by_name(BLIZZ_HEROES, name)
 
     if not some_heroes:
-        message = 'Found no heroes for you :( Is "{}" hero name correct?'\
-                  .format(name)
+        message = f'Found no heroes for you :( Is "{name}" hero name correct?'
 
         view = View(Message('message',
                             message))

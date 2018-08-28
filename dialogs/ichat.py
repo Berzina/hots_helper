@@ -36,24 +36,25 @@ def receive(app, query_id, user_id, query_data, testing=False):
 
     active_dialog = SESSIONS[user_id]
 
-    print("Received trigger: {} ({})".format(trigger, answer_idx))
+    print(f"Received trigger: {trigger} ({answer_idx})")
     try:
         active_dialog.trigger(trigger, answer_idx)
     except MachineError as e:
         send_error(app, query_id, user_id, "Did you just misclick?", testing)
 
-    print("State after trigger: {}".format(active_dialog.state))
+    print(f"State after trigger: {active_dialog.state}")
 
     if active_dialog.state == 'end':
         SESSIONS.pop(user_id)
         app.answer_callback_query(query_id)
         app.send_message(user_id, "Thanks for using me ^^")
     else:
-        print("Next trigger: {}".format(active_dialog.next_trigger))
+        print(f"Next trigger: {active_dialog.next_trigger}")
         try:
             active_dialog.trigger(active_dialog.next_trigger)
         except MachineError as e:
-            send_error(app, query_id, user_id, "Did you just misclick?", testing)
+            send_error(app, query_id, user_id,
+                       "Did you just misclick?", testing)
 
         for response in active_dialog.send_back:
             send(app, query_id, user_id, response, testing)
@@ -67,12 +68,12 @@ def send(app, query_id, user_id, message, testing=False):
         if not testing:
             app.send_message(user_id, **message)
         else:
-            print("Sending: {}".format(message))
+            print(f"Sending: {message}")
     else:
         if not testing:
             views.send_view(app, user_id, views.make_hero_profile, *message)
         else:
-            print("Sending: {}".format(views.make_hero_profile(*message)))
+            print(f"Sending: {views.make_hero_profile(*message)}")
 
 
 def send_error(app, query_id, user_id, message, testing=False):
