@@ -4,6 +4,8 @@ from itertools import dropwhile
 
 from data.dialogs import CHOOSE
 
+from utils.statistics import fetch_winrates
+
 
 def take_by_name(bheroes, name):
     matching = [bhero for bhero in bheroes
@@ -68,7 +70,6 @@ def by_choose(blizzard_heroes, answers):
     random.shuffle(blizzard_heroes)
 
     return blizzard_heroes[:3]
-# damage=5, utility=5, survivability=9, complexity=4
 
 
 # TODO: hardcode range

@@ -82,6 +82,25 @@ def get_hero_profile(name):
     return view
 
 
+def make_hero_profile(bhero, stata):
+
+    caption = '**{}**\n__Winrate:{}__'\
+              .format(bhero.hero.name,
+
+                      "{stata.percent}% (games: {stata.count}, wins: {stata.win_count})"
+                      .format(stata=stata))
+
+    if bhero.hero.image:
+        view = View(Photo('photo',
+                          bhero.hero.image,
+                          caption))
+    else:
+        view = View(Message('message',
+                            caption))
+
+    return view
+
+
 def get_hero_variant_buttons(some_heroes):
     some_heroes = some_heroes[:5]
 

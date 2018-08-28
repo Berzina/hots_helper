@@ -1,4 +1,9 @@
+from collections import namedtuple
 from .fetcher import fetch_hotsdog
+
+Stata = namedtuple('Stata', ('hero_name',
+                             'percent', 'count', 'win_count',
+                             'diff_percent', 'diff_count'))
 
 
 def fetch_init():
@@ -57,3 +62,35 @@ def fetch_hero_stata(hero_name, build=None, field=None, mode=None):
                 'diff_count': diff_count}
 
     return {}
+
+
+def fetch_winrates(build=None, field=None, mode=None):
+
+    all_stata = fetch_stata(build=None, field=None, mode=None)
+
+    heroes_winrates = []
+
+    if all_stata:
+        for hero_name in list(all_stata["Current"].keys()):
+            prev = all_stata["Previous"][hero_name]
+            current = all_stata["Current"][hero_name]
+
+            prev_count = prev['Losses'] + prev['Wins']
+            prev_percent = 100*(prev['Wins']/prev_count)
+
+            current_count = current['Losses'] + current['Wins']
+            current_percent = 100*(current['Wins']/current_count)
+
+            diff_percent = current_percent - prev_percent
+            diff_count = current_count - prev_count
+
+            stata = Stata(hero_name=hero_name,
+                          percent=round(current_percent, 2),
+                          win_count=current['Wins'],
+                          count=current_count,
+                          diff_percent=round(diff_percent, 2),
+                          diff_count=diff_count)
+
+            heroes_winrates.append(stata)
+
+    return heroes_winrates

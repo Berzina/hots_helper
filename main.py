@@ -16,6 +16,7 @@ from pyrogram.api.functions.messages import (SendInlineBotResult,
                                              SetInlineBotResults)
 
 import chat
+from dialogs import ichat
 
 from data import update, storage
 
@@ -75,12 +76,24 @@ def choose_for_me(client, message):
     )
 
 
+@app.on_message(Filters.command(["chooseformap", "cfmap"]))
+def choose_for_me(client, message):
+    ichat.start(app, message.chat.id, "choosebymap")
+
+
+# @app.on_callback_query(Filters.regex(r"(choosebymap)-(\w+)-(\d+)"))
+# def choosebymap_callback(client, message):
+#     ichat.receive(app, message.id, message.from_user.id, message.data)
+
+
 @app.on_callback_query()
 def callback(client, message):
 
     tokens = message.data.split("_")
 
-    if len(tokens) == 1:
+    if "-" in message.data:
+        query_type = "idialog"
+    elif len(tokens) == 1:
         query_type = "plain_text"
     elif len(tokens) == 3:
         query_type = "dialog"
@@ -111,6 +124,8 @@ def callback(client, message):
         else:
             chat.send_message(app, message.from_user.id, dialog_name,
                               reply_cntr, phrase_idx)
+    elif query_type == 'idialog':
+        ichat.receive(app, message.id, message.from_user.id, message.data)
     else:
         raise Exception("Unknown query type: '{}'.".format(query_type))
 

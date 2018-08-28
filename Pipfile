@@ -13,5 +13,6 @@ requests = "*"
 bs4 = "*"
 selenium = "*"
 telegraph = "*"
+transitions = "*"
 
 [dev-packages]
