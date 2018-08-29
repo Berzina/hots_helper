@@ -76,9 +76,9 @@ def choose_for_me(client, message):
     )
 
 
-@app.on_message(Filters.command(["chooseformap", "cfmap"]))
+@app.on_message(Filters.command(["choosefordraft", "cfd"]))
 def choose_for_me(client, message):
-    ichat.start(app, message.chat.id, "choosebymap")
+    ichat.start(app, message.chat.id, "choosefordraft")
 
 
 # @app.on_callback_query(Filters.regex(r"(choosebymap)-(\w+)-(\d+)"))

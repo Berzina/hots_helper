@@ -15,20 +15,37 @@ def get_build():
     return fetch_init().get("build")
 
 
-class ChooseByMap(IDialog):
+def get_modes():
+    modes_dict = fetch_init().get("modes")
 
-    dialog_name = 'choosebymap'
+    return [modes_dict[str(idx+1)] for idx in range(len(modes_dict))
+            if modes_dict[str(idx+1)] != "Quick Match"]
+
+
+def get_mode_idx(mode_name):
+    modes_dict = fetch_init().get("modes", {})
+
+    for idx, name in modes_dict.items():
+        if name == mode_name:
+            return idx
+
+    return None
+
+
+class ChooseForDraft(IDialog):
+
+    dialog_name = 'choosefordraft'
 
     states = ['start',
 
-              'starting',
-              'started',
+              'choosing map',
+              'map chosen',
+
+              'choosing mode',
+              'mode chosen',
 
               'choosing sorting criteria',
               'sorting criteria chosen',
-
-              'choosing map',
-              'map chosen',
 
               'choosing role',
               'role chosen',
@@ -41,18 +58,14 @@ class ChooseByMap(IDialog):
               'end']
 
     transitions = [
+
         {'trigger': 'hello',
          'source': 'start',
-         'dest': 'starting',
-         'after': 'send_survey'},
-
-        {'trigger': 'hello_chosen',
-         'source': 'starting',
-         'dest': 'started',
-         'before': 'get_answer'},
+         'dest': '=',
+         'after': 'choose_map'},
 
         {'trigger': 'choose_map',
-         'source': 'started',
+         'source': 'start',
          'dest': 'choosing map',
          'after': 'send_survey'},
 
@@ -61,10 +74,21 @@ class ChooseByMap(IDialog):
          'dest': 'map chosen',
          'before': 'get_answer'},
 
-        {'trigger': 'choose_criteria',
+        {'trigger': 'choose_mode',
          'source': 'map chosen',
-         'dest': 'choosing sorting criteria',
+         'dest': 'choosing mode',
          'conditions': ['is_map_chosen'],
+         'after': 'send_survey'},
+
+        {'trigger': 'mode_chosen',
+         'source': 'choosing mode',
+         'dest': 'mode chosen',
+         'before': 'get_answer'},
+
+        {'trigger': 'choose_criteria',
+         'source': 'mode chosen',
+         'dest': 'choosing sorting criteria',
+         'conditions': ['is_map_chosen', 'is_mode_chosen'],
          'after': 'send_survey'},
 
         {'trigger': 'criteria_chosen',
@@ -103,17 +127,18 @@ class ChooseByMap(IDialog):
          'dest': 'end'}
     ]
 
-    dialog = {'starting': {'q': "Wanna pass a test?",
-                           'a': ["Yes", "No"],
-                           'trans': 'hello_chosen',
-                           'next': 'choose_map',
-                           'common_next': True},
-
-              'choosing map': {'q': "What map do you need?",
+    dialog = {
+              'choosing map': {'q': "Which map do you need?",
                                'a': get_maps(),
                                'trans': 'map_chosen',
-                               'next': 'choose_criteria',
+                               'next': 'choose_mode',
                                'common_next': True},
+
+              'choosing mode': {'q': "Select the game mode:",
+                                'a': get_modes(),
+                                'trans': 'mode_chosen',
+                                'next': 'choose_criteria',
+                                'common_next': True},
 
               'choosing sorting criteria': {'q': 'Choose how to sort:',
                                             'a': ['by winrate percentage',
@@ -128,7 +153,7 @@ class ChooseByMap(IDialog):
                                       'assassin',
                                       'warrior',
                                       'specialist',
-                                      "Don't care"],
+                                      "don't care"],
                                 'trans': 'role_chosen',
                                 'next': 'send_heroes',
                                 'common_next': True},
@@ -146,6 +171,9 @@ class ChooseByMap(IDialog):
     def is_map_chosen(self):
         return 'choosing map' in self.answers
 
+    def is_mode_chosen(self):
+        return 'choosing mode' in self.answers
+
     def is_role_chosen(self):
         return 'choosing role' in self.answers
 
@@ -157,7 +185,7 @@ class ChooseByMap(IDialog):
 
         super().get_answer(given_answer)
 
-        if self.is_map_chosen() and not self.results:
+        if self.is_map_chosen() and self.is_mode_chosen() and not self.results:
             self.fetch_map_stata()
 
         if self.is_role_changed():
@@ -167,7 +195,10 @@ class ChooseByMap(IDialog):
         self.all_heroes = []
         self.pointer = 0
 
-        heroes_winrates = fetch_winrates(field=self.answers["choosing map"])
+        mode_name = self.answers["choosing mode"]
+
+        heroes_winrates = fetch_winrates(field=self.answers["choosing map"],
+                                         mode=get_mode_idx(mode_name))
 
         for hero_winrate in heroes_winrates:
 
@@ -181,7 +212,7 @@ class ChooseByMap(IDialog):
 
     def get_results(self):
 
-        if self.answers['choosing role'] != "Don't care":
+        if self.answers['choosing role'] != "don't care":
             filtered_heroes = [(blizz_hero, hero_winrate)
 
                                for blizz_hero, hero_winrate

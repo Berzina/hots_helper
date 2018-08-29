@@ -52,22 +52,19 @@ class IDialog:
         except Exception as e:
             print("Unknown answer, try again.")
 
-        if self.is_starting and human_answer == 'No':
-            self.trigger('bye')
+        self.answers.update({self.state: human_answer})
+
+        if self.dialog[self.state]["common_next"]:
+            self.next_trigger = self.dialog[self.state]['next']
         else:
-            self.answers.update({self.state: human_answer})
+            self.next_trigger = self.dialog[self.state]['a']\
+                                           [answer-1]['next']
 
-            if self.dialog[self.state]["common_next"]:
-                self.next_trigger = self.dialog[self.state]['next']
-            else:
-                self.next_trigger = self.dialog[self.state]['a']\
-                                               [answer-1]['next']
+        if self.next_trigger == 'bye':
+            self.trigger('bye')
 
-            if self.next_trigger == 'bye':
-                self.trigger('bye')
-
-            print(f"\nOld answers: {self.old_answers}")
-            print(f"\nAnswers: {self.answers}")
+        print(f"\nOld answers: {self.old_answers}")
+        print(f"\nAnswers: {self.answers}")
 
         self.send_back = []
 

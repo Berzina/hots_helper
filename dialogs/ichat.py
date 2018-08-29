@@ -1,11 +1,11 @@
 from transitions.core import MachineError
-from dialogs.choose_by_map import ChooseByMap
+from dialogs.choosers import ChooseForDraft
 
 import views
 
 SESSIONS = {}
 
-dialog_mapping = {'choosebymap': ChooseByMap}
+dialog_mapping = {'choosefordraft': ChooseForDraft}
 
 
 def start(app, user_id, dialog_name, testing=False):
@@ -68,7 +68,7 @@ def send(app, query_id, user_id, message, testing=False):
         if not testing:
             app.send_message(user_id, **message)
         else:
-            print(f"Sending: {message}")
+            print(f"Sending: {message['reply_markup']}")
     else:
         if not testing:
             views.send_view(app, user_id, views.make_hero_profile, *message)
