@@ -32,3 +32,16 @@ PAGE = """
   {rows}
 
 """
+
+PAGE_2 = """
+  <figure> <img src="{hero.image}"/>
+    <figcaption>
+      <i>{hero.stats}</i>
+    </figcaption>
+  </figure>
+
+  <h3>{build.name} (winrate: {build.winrate}%, games: {build.count})</h3>
+
+  {rows}
+
+"""

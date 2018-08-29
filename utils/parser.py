@@ -52,7 +52,7 @@ def parse_builds(hero_talents, best_builds):
             build = Build2(name=build_name.capitalize(),
                            talents=talents,
                            count=build_info['Total'],
-                           winrate=build_info['Winrate'])
+                           winrate=round(100*build_info['Winrate'], 2))
 
             builds.append(build)
 
