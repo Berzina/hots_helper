@@ -2,10 +2,6 @@ import random
 import re
 from itertools import dropwhile
 
-from data.dialogs import CHOOSE
-
-from utils.statistics import fetch_winrates
-
 
 def take_by_name(bheroes, name):
     matching = [bhero for bhero in bheroes
@@ -25,51 +21,6 @@ def take_by_name(bheroes, name):
 def by_role(blizzard_heroes, role):
     return [bhero for bhero in blizzard_heroes
             if bhero.hero.role.lower() == role]
-
-
-def by_choose(blizzard_heroes, answers):
-
-    ROLE_MAPPING = CHOOSE['questions'][1]['a']
-    STATS = ('damage', 'utility', 'survivability',
-             'complexity')
-
-    role_idx = answers[1]
-
-    survivability = answers[2]
-    utility = answers[3]
-    damage = answers[4]
-    complexity = answers[5]
-
-    STATS_VALUES = [survivability, utility, damage, complexity]
-
-    if role_idx != len(ROLE_MAPPING) - 1:
-        role = ROLE_MAPPING[role_idx]
-        blizzard_heroes = by_role(blizzard_heroes, role)
-
-    stats_mapping = tuple(zip(STATS, STATS_VALUES))
-
-    # 0 is for 'For sure!',
-    # 1 is for "Don't care.",
-    # 2 is for 'No way!'
-    stats_mapping = [(stat_name, stat_value)
-                     for stat_name, stat_value
-                     in stats_mapping
-                     if stat_value != 1]  # 1 is for don't care
-
-    stats_mapping.sort(key=lambda stats: stats[1])
-
-    for stat in stats_mapping:
-        reverse = False if stat[1] == 0 else True
-
-        blizzard_heroes = sorted(blizzard_heroes,
-                                 key=lambda bhero:
-                                     bhero.hero.stats._asdict()[stat[0]],
-                                 reverse=reverse)
-
-    blizzard_heroes = blizzard_heroes[:10]
-    random.shuffle(blizzard_heroes)
-
-    return blizzard_heroes[:3]
 
 
 # TODO: hardcode range

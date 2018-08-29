@@ -1,4 +1,5 @@
 from collections import namedtuple
+from functools import partial
 
 from pyrogram.api.types import (InputBotInlineResult,
                                 InputBotInlineMessageText)
@@ -81,13 +82,14 @@ def get_hero_profile(name):
     return view
 
 
-def make_hero_profile(bhero, stata):
+def make_hero_profile(bhero, stata, with_stats=False):
 
-    caption = '**{}**\n__Winrate:{}__'\
-              .format(bhero.hero.name,
+    stats = represent_stats(bhero.hero.stats) if with_stats else ''
 
-                      "{stata.percent}% (games: {stata.count}, wins: {stata.win_count})"
-                      .format(stata=stata))
+    caption = f'**{bhero.hero.name}**\n' \
+              + f'__Winrate:{stata.percent}% ' \
+              + f'(games: {stata.count}, wins: {stata.win_count})__\n' \
+              + f'```{stats}```'
 
     if bhero.hero.image:
         view = View(Photo('photo',
@@ -98,6 +100,10 @@ def make_hero_profile(bhero, stata):
                             caption))
 
     return view
+
+
+make_short_hero_profile = partial(make_hero_profile, with_stats=False)
+make_long_hero_profile = partial(make_hero_profile, with_stats=True)
 
 
 def get_hero_variant_buttons(some_heroes):

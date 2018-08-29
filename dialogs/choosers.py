@@ -6,6 +6,14 @@ from utils import sorting
 
 from data.storage import BLIZZ_HEROES
 
+import views
+
+ok_answer = 'For sure!'
+nvm_answer = "Don't care."
+no_answer = 'No way!'
+
+classic_answers = [ok_answer, nvm_answer, no_answer]
+
 
 def get_maps():
     return fetch_init().get("maps")
@@ -35,6 +43,8 @@ def get_mode_idx(mode_name):
 class ChooseForDraft(IDialog):
 
     dialog_name = 'choosefordraft'
+
+    result_repr = views.make_short_hero_profile
 
     states = ['start',
 
@@ -261,6 +271,239 @@ class ChooseForDraft(IDialog):
             print(hero.hero.name)
 
         print("Ready\n", "*"*50)
+
+    def get_heroes(self):
+
+        print("Getting heroes...")
+        print(f"Result prapared? {self.result_prepared}")
+
+        if not self.result_prepared:
+            print("Preparing results...")
+            self.get_results()
+
+        print("Getting from:\n", "*"*50)
+        for hero, hero_win in self.results:
+            print(hero.hero.name)
+        print("*"*50)
+
+        self.send_survey()
+
+        self.send_back = self.results[self.pointer: self.pointer + 3] \
+                         + self.send_back
+
+        self.pointer += 3
+
+
+class ChooseForQuick(IDialog):
+
+    result_repr = views.make_long_hero_profile
+
+    dialog_name = 'chooseforquick'
+
+    states = ['start',
+
+              'choosing role',
+              'role chosen',
+
+              'choosing survivability',
+              'survivability chosen',
+
+              'choosing utility',
+              'utility chosen',
+
+              'choosing damage',
+              'damage chosen',
+
+              'choosing complexity',
+              'complexity chosen',
+
+              'heroes sent',
+
+              'exiting',
+              'exited',
+
+              'end']
+
+    transitions = [
+
+        {'trigger': 'hello',
+         'source': 'start',
+         'dest': '=',
+         'after': 'choose_role'},
+
+        {'trigger': 'choose_role',
+         'source': 'start',
+         'dest': 'choosing role',
+         'after': 'send_survey'},
+
+        {'trigger': 'role_chosen',
+         'source': 'choosing role',
+         'dest': 'role chosen',
+         'before': 'get_answer'},
+
+        {'trigger': 'choose_survivability',
+         'source': 'role chosen',
+         'dest': 'choosing survivability',
+         'after': 'send_survey'},
+
+        {'trigger': 'survivability_chosen',
+         'source': 'choosing survivability',
+         'dest': 'survivability chosen',
+         'before': 'get_answer'},
+
+        {'trigger': 'choose_utility',
+         'source': 'survivability chosen',
+         'dest': 'choosing utility',
+         'after': 'send_survey'},
+
+        {'trigger': 'utility_chosen',
+         'source': 'choosing utility',
+         'dest': 'utility chosen',
+         'before': 'get_answer'},
+
+        {'trigger': 'choose_damage',
+         'source': 'utility chosen',
+         'dest': 'choosing damage',
+         'after': 'send_survey'},
+
+        {'trigger': 'damage_chosen',
+         'source': 'choosing damage',
+         'dest': 'damage chosen',
+         'before': 'get_answer'},
+
+        {'trigger': 'choose_complexity',
+         'source': 'damage chosen',
+         'dest': 'choosing complexity',
+         'after': 'send_survey'},
+
+        {'trigger': 'complexity_chosen',
+         'source': 'choosing complexity',
+         'dest': 'complexity chosen',
+         'before': 'get_answer'},
+
+        {'trigger': 'send_heroes',
+         'source': ['complexity chosen', 'exiting'],
+         'dest': 'exiting',
+         'after': 'get_heroes'},
+
+        {'trigger': 'exit',
+         'source': 'heroes sent',
+         'dest': 'exiting',
+         'after': 'send_survey'},
+
+        {'trigger': 'exited',
+         'source': 'exiting',
+         'dest': None,
+         'after': 'get_answer'},
+
+        {'trigger': 'bye',
+         'source': '*',
+         'dest': 'end'}
+    ]
+
+    dialog = {
+              'choosing role': {'q': 'Wanna play specific role?',
+                                'a': ['support',
+                                      'assassin',
+                                      'warrior',
+                                      'specialist',
+                                      "don't care"],
+                                'trans': 'role_chosen',
+                                'next': 'choose_survivability',
+                                'common_next': True},
+
+              'choosing survivability': {'q': "How'd you like to be fat? :3",
+                                         'a': classic_answers,
+                                         'trans': 'survivability_chosen',
+                                         'next': 'choose_utility',
+                                         'common_next': True},
+
+              'choosing utility': {'q':
+                                   "Are you kind and pretty lovely today?",
+
+                                   'a': classic_answers,
+                                   'trans': 'utility_chosen',
+                                   'next': 'choose_damage',
+                                   'common_next': True},
+
+              'choosing damage': {'q': "Or may be you are angry and want to "
+                                       + "release your rage? ^^",
+                                  'a': classic_answers,
+                                  'trans': 'damage_chosen',
+                                  'next': 'choose_complexity',
+                                  'common_next': True},
+
+              'choosing complexity': {'q': "Well do you want to show your "
+                                           + "incredible skills? "
+                                           + "It's no problem if not, "
+                                           + "play lazy, friend ^^",
+                                      'a': classic_answers,
+                                      'trans': 'complexity_chosen',
+                                      'next': 'send_heroes',
+                                      'common_next': True},
+
+              'exiting': {'q': 'Exit or more?',
+                          'a': [{'text': 'More heroes',
+                                 'next': 'send_heroes'},
+                                {'text': 'Exit',
+                                 'next': 'bye'}],
+                          'trans': 'exited',
+                          'common_next': False}}
+
+    def get_results(self):
+
+        self.all_heroes = []
+        self.pointer = 0
+
+        heroes_winrates = fetch_winrates(mode=get_mode_idx("Quick Match"))
+
+        for hero_winrate in heroes_winrates:
+
+            some_heroes = filters.take_by_name(BLIZZ_HEROES,
+                                               hero_winrate.hero_name)
+
+            if some_heroes and len(some_heroes) == 1:
+                self.all_heroes.append((some_heroes[0], hero_winrate))
+
+        if self.answers['choosing role'] != "don't care":
+            filtered_heroes = [(blizz_hero, hero_winrate)
+
+                               for blizz_hero, hero_winrate
+                               in self.all_heroes
+
+                               if blizz_hero.hero.role.lower()
+                               == self.answers['choosing role'].lower()]
+        else:
+            filtered_heroes = self.all_heroes
+
+        sorted_heroes = sorted(filtered_heroes,
+
+                               key=lambda structure:
+                               structure[1].percent,
+
+                               reverse=True)
+
+        ok_criteria = [criteria_name.split()[1]
+                       for criteria_name, criteria_answer
+                       in self.answers.items()
+                       if criteria_answer == ok_answer]
+
+        no_criteria = [criteria_name.split()[1]
+                       for criteria_name, criteria_answer
+                       in self.answers.items()
+                       if criteria_answer == no_answer]
+
+        for criteria in no_criteria + ok_criteria:
+            reverse = True if criteria in ok_criteria else False
+            sorted_heroes = sorted(sorted_heroes,
+
+                                   key=lambda structure:
+                                   structure[0].hero.stats._asdict()[criteria],
+
+                                   reverse=reverse)
+
+        self.results = sorted_heroes
+        self.result_prepared = True
 
     def get_heroes(self):
 

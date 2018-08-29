@@ -15,7 +15,6 @@ from pyrogram.api.types import (BotInlineMessageText,
 from pyrogram.api.functions.messages import (SendInlineBotResult,
                                              SetInlineBotResults)
 
-import chat
 from dialogs import ichat
 
 from data import update, storage
@@ -58,26 +57,13 @@ def raw(client, update, users, chats):
                      ))
 
 
-@app.on_message(Filters.command(["chooseforme", "cfm"]))
-def choose_for_me(client, message):
-    app.send_message(
-        message.chat.id,
-        "Well well, wanna chose a hero?",
-        reply_markup=InlineKeyboardMarkup(
-            [
-                [  # First row
-                    # Generates a callback query when pressed
-                    InlineKeyboardButton("Yes", callback_data="choose_0_1"),
-                    # Opens a web URL
-                    InlineKeyboardButton("No", callback_data="choose_0_0")
-                ]
-            ]
-        )
-    )
+@app.on_message(Filters.command(["chooseforquick", "cfq"]))
+def choose_for_quick(client, message):
+    ichat.start(app, message.chat.id, "chooseforquick")
 
 
 @app.on_message(Filters.command(["choosefordraft", "cfd"]))
-def choose_for_me(client, message):
+def choose_for_draft(client, message):
     ichat.start(app, message.chat.id, "choosefordraft")
 
 
@@ -89,43 +75,17 @@ def choose_for_me(client, message):
 @app.on_callback_query()
 def callback(client, message):
 
-    tokens = message.data.split("_")
-
     if "-" in message.data:
         query_type = "idialog"
-    elif len(tokens) == 1:
-        query_type = "plain_text"
-    elif len(tokens) == 3:
-        query_type = "dialog"
     else:
-        raise Exception(f"Unknown query: '{message.data}'.")
+        query_type = "plain_text"
 
     if query_type == "plain_text":
-
         send_hero(message.from_user.id, message.data)
 
-    elif query_type == "dialog":
-
-        dialog_name, reply_cntr, phrase_idx = tokens
-        reply_cntr, phrase_idx = int(reply_cntr), int(phrase_idx)
-
-        if reply_cntr == 0:
-
-            if phrase_idx == 1:
-                chat.start(app, message.from_user.id, dialog_name)
-            elif phrase_idx == 0:
-                app.send_message(
-                    message.from_user.id,
-                    "KK see you next time ^^"
-                )
-            else:
-                print("Unknown error.")
-
-        else:
-            chat.send_message(app, message.from_user.id, dialog_name,
-                              reply_cntr, phrase_idx)
     elif query_type == 'idialog':
         ichat.receive(app, message.id, message.from_user.id, message.data)
+
     else:
         raise Exception(f"Unknown query type: '{query_type}'.")
 

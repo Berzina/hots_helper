@@ -1,11 +1,12 @@
 from transitions.core import MachineError
-from dialogs.choosers import ChooseForDraft
+from dialogs.choosers import ChooseForDraft, ChooseForQuick
 
 import views
 
 SESSIONS = {}
 
-dialog_mapping = {'choosefordraft': ChooseForDraft}
+dialog_mapping = {'choosefordraft': ChooseForDraft,
+                  'chooseforquick': ChooseForQuick}
 
 
 def start(app, user_id, dialog_name, testing=False):
@@ -21,7 +22,7 @@ def start(app, user_id, dialog_name, testing=False):
     active_dialog.hello()
 
     for response in active_dialog.send_back:
-        send(app, None, user_id, response, testing)
+        send(app, None, user_id, response, None, testing)
 
 
 def receive(app, query_id, user_id, query_data, testing=False):
@@ -46,8 +47,9 @@ def receive(app, query_id, user_id, query_data, testing=False):
 
     if active_dialog.state == 'end':
         SESSIONS.pop(user_id)
-        app.answer_callback_query(query_id)
-        app.send_message(user_id, "Thanks for using me ^^")
+        if not testing:
+            app.answer_callback_query(query_id)
+            app.send_message(user_id, "Thanks for using me ^^")
     else:
         print(f"Next trigger: {active_dialog.next_trigger}")
         try:
@@ -57,10 +59,11 @@ def receive(app, query_id, user_id, query_data, testing=False):
                        "Did you just misclick?", testing)
 
         for response in active_dialog.send_back:
-            send(app, query_id, user_id, response, testing)
+            send(app, query_id, user_id, response, active_dialog.result_repr,
+                 testing)
 
 
-def send(app, query_id, user_id, message, testing=False):
+def send(app, query_id, user_id, message, repr_method=None, testing=False):
     if query_id and not testing:
         app.answer_callback_query(query_id)
 
@@ -71,9 +74,9 @@ def send(app, query_id, user_id, message, testing=False):
             print(f"Sending: {message['reply_markup']}")
     else:
         if not testing:
-            views.send_view(app, user_id, views.make_hero_profile, *message)
+            views.send_view(app, user_id, repr_method, *message)
         else:
-            print(f"Sending: {views.make_hero_profile(*message)}")
+            print(f"Sending: {repr_method(*message)}")
 
 
 def send_error(app, query_id, user_id, message, testing=False):

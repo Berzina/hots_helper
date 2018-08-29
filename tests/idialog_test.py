@@ -57,17 +57,27 @@ class TestIDialog(unittest.TestCase):
     #     ichat.receive("smth", 123, 123, 'choosefordraft-exited-0', True)
     #     ichat.receive("smth", 123, 123, 'choosefordraft-exited-2', True)
 
-    def test_ichat_role_changing(self):
-        ichat.start("smth", 123, 'choosefordraft', True)
+    # def test_ichat_role_changing(self):
+    #     ichat.start("smth", 123, 'choosefordraft', True)
 
-        ichat.receive("smth", 123, 123, 'choosefordraft-map_chosen-14', True)
-        ichat.receive("smth", 123, 123, 'choosefordraft-mode_chosen-2', True)
-        ichat.receive("smth", 123, 123, 'choosefordraft-criteria_chosen-2', True)
+    #     ichat.receive("smth", 123, 123, 'choosefordraft-map_chosen-14', True)
+    #     ichat.receive("smth", 123, 123, 'choosefordraft-mode_chosen-2', True)
+    #     ichat.receive("smth", 123, 123, 'choosefordraft-criteria_chosen-2', True)
+    #     ichat.receive("smth", 123, 123, 'choosefordraft-role_chosen-1', True)
+    #     ichat.receive("smth", 123, 123, 'choosefordraft-exited-2', True)
+    #     ichat.receive("smth", 123, 123, 'choosefordraft-role_chosen-3', True)
+    #     ichat.receive("smth", 123, 123, 'choosefordraft-exited-3', True)
+
+    def test_ichat_cfquick(self):
+        ichat.start("smth", 123, 'chooseforquick', True)
+
         ichat.receive("smth", 123, 123, 'choosefordraft-role_chosen-1', True)
-        ichat.receive("smth", 123, 123, 'choosefordraft-exited-2', True)
-        ichat.receive("smth", 123, 123, 'choosefordraft-role_chosen-3', True)
-        ichat.receive("smth", 123, 123, 'choosefordraft-exited-3', True)
-
+        ichat.receive("smth", 123, 123, 'choosefordraft-survivability_chosen-2', True)
+        ichat.receive("smth", 123, 123, 'chooseforquick-utility_chosen-1', True)
+        ichat.receive("smth", 123, 123, 'chooseforquick-damage_chosen-3', True)
+        ichat.receive("smth", 123, 123, 'chooseforquick-complexity_chosen-3', True)
+        ichat.receive("smth", 123, 123, 'chooseforquick-exited-1', True)
+        ichat.receive("smth", 123, 123, 'chooseforquick-exited-2', True)
 
 
 if __name__ == '__main__':
