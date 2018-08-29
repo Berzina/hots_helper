@@ -97,19 +97,7 @@ def hero_list(client, message):
 
 def send_hero(user_id, in_message):
     views.send_view(app, user_id, views.get_hero_profile, in_message)
-
-    bheroes = filters.take_by_name(storage.BLIZZ_HEROES, in_message)
-
-    if len(bheroes) == 1:
-        bhero = bheroes[0]
-        for build_idx, build in enumerate(bhero.builds):
-            page_content = pages.make_page(bhero, build_idx)
-            page_link = pages.send_page(bhero.hero.en_name, page_content)
-
-            app.send_message(
-                user_id,
-                page_link
-            )
+    views.send_view(app, user_id, views.get_hero_pages, in_message)
 
 
 if __name__ == '__main__':

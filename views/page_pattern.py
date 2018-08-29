@@ -9,6 +9,17 @@ ROW_PATTERN = """
 </p>
 """
 
+ROW_PATTERN_2 = """
+<p>
+  <blockquote><strong>{talent.level}</strong> | <strong>{talent.idx}</strong> | {talent.title} ({talent.ability})</blockquote>
+  <figure> <img src="{talent.img}"/>
+    <figcaption>
+      <i>{talent.descr}</i>
+    </figcaption>
+  </figure>
+</p>
+"""
+
 PAGE = """
   <figure> <img src="{hero.image}"/>
     <figcaption>
@@ -21,19 +32,3 @@ PAGE = """
   {rows}
 
 """
-
-EMODJI_NUMBER_MAPPING = {
-  1: '1️⃣',
-  3: '3️⃣',
-  4: '4️⃣',
-  6: '6️⃣',
-  7: '7️⃣',
-  9: '9️⃣',
-  10: '1️⃣0️⃣',
-  12: '1️⃣2️⃣',
-  13: '1️⃣3️⃣',
-  15: '1️⃣5️⃣',
-  16: '1️⃣6️⃣',
-  19: '1️⃣9️⃣',
-  20: '2️⃣0️⃣'
-}

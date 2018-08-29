@@ -20,6 +20,15 @@ def fetch_init():
 
 
 def fetch_stata(build=None, field=None, mode=None):
+    params = construct_params(build, field, mode)
+
+    all_data = fetch_hotsdog("/get-winrates",
+                             params)
+
+    return all_data
+
+
+def construct_params(build=None, field=None, mode=None, hero=None):
     if not build:
         init_data = fetch_init()
         if init_data:
@@ -33,14 +42,14 @@ def fetch_stata(build=None, field=None, mode=None):
         params.update({"map": field})
     if mode:
         params.update({"mode": mode})
+    if hero:
+        params.update({"hero": hero})
 
-    all_data = fetch_hotsdog("/get-winrates",
-                             params)
-
-    return all_data
+    return params
 
 
 def fetch_hero_stata(hero_name, build=None, field=None, mode=None):
+
     all_data = fetch_stata(build, field, mode)
 
     if all_data:
@@ -62,6 +71,35 @@ def fetch_hero_stata(hero_name, build=None, field=None, mode=None):
                 'diff_count': diff_count}
 
     return {}
+
+
+def fetch_build_winrates(hero_name, build=None, field=None, mode=None):
+    params = construct_params(build, field, mode, hero_name)
+
+    all_data = fetch_hotsdog("/get-build-winrates",
+                             params)
+
+    return all_data
+
+
+def fetch_best_builds(hero_name, build=None, field=None, mode=None):
+
+    most_popular = {}
+    most_winning = {}
+
+    all_data = fetch_build_winrates(hero_name, build, field, mode)
+
+    if "PopularBuilds" in all_data and all_data["PopularBuilds"] is not None:
+        most_popular = sorted(all_data["PopularBuilds"],
+                              key=lambda build: build['Total'],
+                              reverse=True)[0]
+
+    if "WinningBuilds" in all_data and all_data["WinningBuilds"] is not None:
+        most_winning = sorted(all_data["WinningBuilds"],
+                              key=lambda build: build['Winrate'],
+                              reverse=True)[0]
+
+    return most_winning, most_popular
 
 
 def fetch_winrates(build=None, field=None, mode=None):

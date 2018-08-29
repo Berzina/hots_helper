@@ -9,11 +9,18 @@ from pyrogram import (InlineKeyboardMarkup, InlineKeyboardButton)
 from data.storage import BLIZZ_HEROES
 
 from utils.filters import take_by_name
-from utils.statistics import fetch_hero_stata
+
+from utils.fetcher import fetch_hero_talents
+from utils.statistics import fetch_hero_stata, fetch_best_builds
+
+from utils.parser import parse_builds
+from utils import pages
+
 from utils.exceptions import *
 
 View = namedtuple('View', ('view'))
 Message = namedtuple('Message', ('type', 'message'))
+MessageList = namedtuple('MessageList', ('type', 'messages'))
 Markup = namedtuple('Markup', ('type', 'message', 'markup'))
 Photo = namedtuple('Photo', ('type', 'photo', 'caption'))
 
@@ -24,6 +31,11 @@ def send_view(app, user_id, construct_method, *params):
     if send_this.view.type == 'message':
         app.send_message(user_id,
                          send_this.view.message)
+
+    elif send_this.view.type == 'message_list':
+        for message in send_this.view.messages:
+            app.send_message(user_id,
+                             message)
 
     elif send_this.view.type == 'markup':
         app.send_message(user_id,
@@ -82,6 +94,42 @@ def get_hero_profile(name):
     return view
 
 
+def get_hero_pages(name):
+    some_heroes = take_by_name(BLIZZ_HEROES, name)
+
+    page_links = []
+
+    if not some_heroes:
+        page_links = []
+    elif len(some_heroes) == 1:
+        bhero = some_heroes[0]
+
+        best_builds = fetch_best_builds(bhero.hero.en_name)
+
+        best_builds = {'winning': best_builds[0],
+                       'popular': best_builds[1]}
+
+        hero_talents = fetch_hero_talents(bhero.hero.en_name)
+
+        builds = parse_builds(hero_talents, best_builds)
+
+        if builds:
+            bhero = bhero._replace(builds=builds)
+
+        for build_idx, build in enumerate(bhero.builds):
+            page_content = pages.make_page(bhero, build_idx)
+            page_link = pages.send_page(bhero.hero.en_name, page_content)
+
+            page_links.append(page_link)
+    else:
+        page_links = []
+
+    view = View(MessageList('message_list',
+                            page_links))
+
+    return view
+
+
 def make_hero_profile(bhero, stata, with_stats=False):
 
     stats = represent_stats(bhero.hero.stats) if with_stats else ''
@@ -117,78 +165,6 @@ def get_hero_variant_buttons(some_heroes):
                             callback_data=bhero.hero.en_name)])
 
     return InlineKeyboardMarkup(buttons)
-
-
-def open_build(bh):
-
-    builds_header = '''
-* __{}__
-```
----------------
- lvl | talent
-     | name
----------------```'''
-
-    builds_table = '''```
-{:^5}|{}
----------------```
-'''
-
-    build_full_table = ''
-
-    for build in bh.builds:
-        build_full_table += builds_header.format(build.name)
-
-        for talent in build.talents:
-            build_full_table += builds_table.format(talent.level,
-                                                    talent.name)
-
-        build_full_table += '\n'
-
-    return '''
-**{name}**
-
-
-{btable}
-'''.format(name=bh.hero.name,
-           btable=build_full_table)
-
-
-def link_build(some_heroes):
-    response = ''
-
-    for hero in some_heroes:
-            response += '''
-**{name}**
-
-
-__Builds:__
-
-{blist}
-
-
-'''\
-.format(name=hero.hero.name,
-        blist='\n'.join(['* {bname}: {blink}'
-                         .format(bname=build.name,
-                                 blink=build.link)
-                         for build in hero.builds]))
-
-    return response
-
-
-def responce_form(user_id, answers):
-    from data import dialogs
-
-    questions = dialogs.CHOOSE['questions']
-    response = 'You (user {}) responded that:\n'.format(user_id)
-
-    for idx, answer in answers.items():
-        if idx:
-            field = questions[idx]
-            response += '{}: {}\n'.format(field['q'], field['a'][answer])
-
-    return response
 
 
 def get_inline_results(query):

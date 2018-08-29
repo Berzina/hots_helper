@@ -14,5 +14,7 @@ bs4 = "*"
 selenium = "*"
 telegraph = "*"
 transitions = "*"
+pytest = "*"
+pprint = "*"
 
 [dev-packages]

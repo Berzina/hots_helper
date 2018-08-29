@@ -30,6 +30,14 @@ fetch_heroes = partial(basic_fetch, API_URL, "/heroes")
 fetch_hotsdog = partial(basic_fetch, STATISTICS_URL)
 
 
+def fetch_hero(en_name):
+    return basic_fetch(API_URL, f"/heroes/{en_name}")
+
+
+def fetch_hero_talents(en_name):
+    return fetch_hero(en_name)["talents"]
+
+
 def fetch_blizzhero_page(link=BLIZZHERO_URL + '/heroes'):
     try:
         options = webdriver.ChromeOptions()

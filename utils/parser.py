@@ -3,7 +3,7 @@
 from bs4 import BeautifulSoup
 from collections import namedtuple
 
-from utils.filters import get_cyrillic, get_cyrillic_str
+from utils.filters import get_cyrillic, get_cyrillic_str, take_talent_by_name
 
 from utils.fetcher import fetch_blizzhero_page
 
@@ -18,9 +18,45 @@ Stats = namedtuple('Stats', ('damage', 'utility', 'survivability',
                              'complexity'))
 
 Build = namedtuple('Build', ('name', 'talents', 'link'))
+Build2 = namedtuple('Build2', ('name', 'talents', 'count', 'winrate'))
+
 Talent = namedtuple('Talent', ('idx', 'level', 'name', 'descr', 'img'))
+Talent2 = namedtuple('Talent2', ('name', 'title', 'idx', 'level', 'ability',
+                                 'descr', 'img'))
 
 BlizzHero = namedtuple('BlizzHero', ('hero', 'builds'))
+
+
+def parse_builds(hero_talents, best_builds):
+
+    builds = []
+
+    for build_name, build_info in best_builds.items():
+        talents = []
+
+        if build_info:
+
+            for name in build_info['Build']:
+                raw_talent = take_talent_by_name(hero_talents, name)
+
+                talent = Talent2(name=raw_talent['name'],
+                                 title=raw_talent['title'],
+                                 idx=raw_talent['sort'],
+                                 level=raw_talent['level'],
+                                 ability=raw_talent['ability'],
+                                 descr=raw_talent['description'],
+                                 img=list(raw_talent['icon_url'].values())[0])
+
+                talents.append(talent)
+
+            build = Build2(name=build_name.capitalize(),
+                           talents=talents,
+                           count=build_info['Total'],
+                           winrate=build_info['Winrate'])
+
+            builds.append(build)
+
+    return builds
 
 
 class APIParser:

@@ -1,0 +1,6 @@
+{
+  "tests/dialogue_test.py": true,
+  "tests/test_fetcher.py::test_raises_exception_on_non_string_arguments": true,
+  "tests/update_test.py::TestBlizzUpdate": true,
+  "tests/update_test.py::TestBlizzUpdate::test_update_missing": true
+}

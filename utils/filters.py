@@ -3,6 +3,17 @@ import re
 from itertools import dropwhile
 
 
+def take_talent_by_name(talents_form_api, name):
+    talent_search = dropwhile(lambda talent: talent['name'] != name,
+                              talents_form_api)
+    try:
+        talent = next(talent_search)
+    except StopIteration:
+        talent = None
+
+    return talent
+
+
 def take_by_name(bheroes, name):
     matching = [bhero for bhero in bheroes
                 if name.lower() in bhero.hero.name.lower()]
