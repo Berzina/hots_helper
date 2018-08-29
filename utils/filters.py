@@ -26,7 +26,15 @@ def take_by_name(bheroes, name):
 
     matching.sort(key=lambda x: match_score(x.hero))
 
-    return matching
+    if matching[0].hero.en_name == name \
+       or matching[0].hero.ru_name == name:
+
+        certain_match = matching[0]
+
+    else:
+        certain_match = None
+
+    return matching, certain_match
 
 
 def by_role(blizzard_heroes, role):

@@ -60,7 +60,7 @@ def send_view(app, user_id, construct_method, *params):
 
 
 def get_hero_profile(name):
-    some_heroes = take_by_name(BLIZZ_HEROES, name)
+    some_heroes, certain_hero = take_by_name(BLIZZ_HEROES, name)
 
     if not some_heroes:
         message = f'Found no heroes for you :( Is "{name}" hero name correct?'
@@ -68,8 +68,8 @@ def get_hero_profile(name):
         view = View(Message('message',
                             message))
 
-    elif len(some_heroes) == 1:
-        bhero = some_heroes[0]
+    elif certain_hero:
+        bhero = certain_hero
 
         caption = '**{}**\n__Winrate:{}%__\n```{}```'\
                   .format(bhero.hero.name,
@@ -95,13 +95,13 @@ def get_hero_profile(name):
 
 
 def get_hero_pages(name):
-    some_heroes = take_by_name(BLIZZ_HEROES, name)
+    some_heroes, certain_hero = take_by_name(BLIZZ_HEROES, name)
 
     page_links = []
 
     if not some_heroes:
         page_links = []
-    elif len(some_heroes) == 1:
+    elif certain_hero:
         bhero = some_heroes[0]
 
         best_builds = fetch_best_builds(bhero.hero.en_name)

@@ -212,11 +212,11 @@ class ChooseForDraft(IDialog):
 
         for hero_winrate in heroes_winrates:
 
-            some_heroes = filters.take_by_name(BLIZZ_HEROES,
-                                               hero_winrate.hero_name)
+            _, bhero = filters.take_by_name(BLIZZ_HEROES,
+                                            hero_winrate.hero_name)
 
-            if some_heroes and len(some_heroes) == 1:
-                self.all_heroes.append((some_heroes[0], hero_winrate))
+            if bhero:
+                self.all_heroes.append((bhero, hero_winrate))
 
         self.results = True
 
@@ -459,11 +459,11 @@ class ChooseForQuick(IDialog):
 
         for hero_winrate in heroes_winrates:
 
-            some_heroes = filters.take_by_name(BLIZZ_HEROES,
-                                               hero_winrate.hero_name)
+            _, bhero = filters.take_by_name(BLIZZ_HEROES,
+                                           hero_winrate.hero_name)
 
-            if some_heroes and len(some_heroes) == 1:
-                self.all_heroes.append((some_heroes[0], hero_winrate))
+            if bhero:
+                self.all_heroes.append((bhero, hero_winrate))
 
         if self.answers['choosing role'] != "don't care":
             filtered_heroes = [(blizz_hero, hero_winrate)

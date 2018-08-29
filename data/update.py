@@ -25,7 +25,7 @@ def update_missing(update_on_loading=True):
     missing_heroes = []
 
     for hero in heroes:
-        if not take_by_name(BLIZZ_HEROES, hero.name):
+        if not take_by_name(BLIZZ_HEROES, hero.name)[0]:
             missing_heroes.append(hero)
 
     print("Founded missing heroes:\n{}".format("\n"
