@@ -19,8 +19,10 @@ def fetch_init():
                 'modes': all_data["Modes"]}
 
 
-def fetch_stata(build=None, field=None, mode=None):
-    params = construct_params(build, field, mode)
+def fetch_stata(build=None, field=None, mode=None,
+                skill_low=None, skill_high=None):
+
+    params = construct_params(build, field, mode, skill_low, skill_high)
 
     all_data = fetch_hotsdog("/get-winrates",
                              params)
@@ -28,7 +30,9 @@ def fetch_stata(build=None, field=None, mode=None):
     return all_data
 
 
-def construct_params(build=None, field=None, mode=None, hero=None):
+def construct_params(build=None, field=None, mode=None, hero=None,
+                     skill_low=None, skill_high=None):
+
     if not build:
         init_data = fetch_init()
         if init_data:
@@ -44,6 +48,10 @@ def construct_params(build=None, field=None, mode=None, hero=None):
         params.update({"mode": mode})
     if hero:
         params.update({"hero": hero})
+    if skill_low:
+        params.update({"skill_low": skill_low})
+    if skill_high:
+        params.update({"skill_high": skill_high})
 
     return params
 
@@ -102,22 +110,26 @@ def fetch_best_builds(hero_name, build=None, field=None, mode=None):
     return most_winning, most_popular
 
 
-def fetch_winrates(build=None, field=None, mode=None):
+def fetch_winrates(build=None, field=None, mode=None,
+                   skill_low=None, skill_high=None):
 
-    all_stata = fetch_stata(build, field, mode)
+    all_stata = fetch_stata(build, field, mode,
+                            skill_low, skill_high)
 
     heroes_winrates = []
 
     if all_stata:
         for hero_name in list(all_stata["Current"].keys()):
-            prev = all_stata["Previous"][hero_name]
-            current = all_stata["Current"][hero_name]
+            default = {'Wins': 0, 'Losses': 0}
+
+            prev = all_stata["Previous"].get(hero_name, default)
+            current = all_stata["Current"].get(hero_name, default)
 
             prev_count = prev['Losses'] + prev['Wins']
-            prev_percent = 100*(prev['Wins']/prev_count)
+            prev_percent = 100*(prev['Wins']/prev_count) if prev_count else 0
 
             current_count = current['Losses'] + current['Wins']
-            current_percent = 100*(current['Wins']/current_count)
+            current_percent = 100*(current['Wins']/current_count) if current_count else 0
 
             diff_percent = current_percent - prev_percent
             diff_count = current_count - prev_count

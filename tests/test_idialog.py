@@ -15,6 +15,7 @@ c_receive = partial(ichat.receive, "app", 'query_id', 'user_id',
 draft_callbacks = {"receive_heroes":
                    ['choosefordraft-map_chosen-14',
                     'choosefordraft-mode_chosen-2',
+                    'choosefordraft-skill_chosen-7',
                     'choosefordraft-criteria_chosen-2',
                     'choosefordraft-role_chosen-1',
                     'choosefordraft-exited-0'],
@@ -22,6 +23,7 @@ draft_callbacks = {"receive_heroes":
                    "receive_heroes_2":
                    ['choosefordraft-map_chosen-13',
                     'choosefordraft-mode_chosen-2',
+                    'choosefordraft-skill_chosen-2',
                     'choosefordraft-criteria_chosen-2',
                     'choosefordraft-role_chosen-1',
                     'choosefordraft-exited-0'],
@@ -29,6 +31,7 @@ draft_callbacks = {"receive_heroes":
                    "bye_in_body":
                    ['choosefordraft-map_chosen-14',
                     'choosefordraft-mode_chosen-2',
+                    'choosefordraft-skill_chosen-2',
                     'choosefordraft-bye-0',
                     'choosefordraft-criteria_chosen-2',
                     'choosefordraft-role_chosen-1',
@@ -36,6 +39,7 @@ draft_callbacks = {"receive_heroes":
 
                    "wrong_callback_seq":
                    ['choosefordraft-map_chosen-14',
+                    'choosefordraft-skill_chosen-2',
                     'choosefordraft-role_chosen-1',
                     'choosefordraft-mode_chosen-2',
                     'choosefordraft-criteria_chosen-2',
@@ -44,6 +48,7 @@ draft_callbacks = {"receive_heroes":
                    "role_changing":
                    ['choosefordraft-map_chosen-14',
                     'choosefordraft-mode_chosen-2',
+                    'choosefordraft-skill_chosen-2',
                     'choosefordraft-criteria_chosen-2',
                     'choosefordraft-role_chosen-1',
                     'choosefordraft-exited-2',

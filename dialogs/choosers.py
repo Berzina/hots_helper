@@ -54,6 +54,9 @@ class ChooseForDraft(IDialog):
               'choosing mode',
               'mode chosen',
 
+              'choosing skill',
+              'skill chosen',
+
               'choosing sorting criteria',
               'sorting criteria chosen',
 
@@ -95,8 +98,18 @@ class ChooseForDraft(IDialog):
          'dest': 'mode chosen',
          'before': 'get_answer'},
 
-        {'trigger': 'choose_criteria',
+        {'trigger': 'choose_skill',
          'source': 'mode chosen',
+         'dest': 'choosing skill',
+         'after': 'send_survey'},
+
+        {'trigger': 'skill_chosen',
+         'source': 'choosing skill',
+         'dest': 'skill chosen',
+         'before': 'get_answer'},
+
+        {'trigger': 'choose_criteria',
+         'source': 'skill chosen',
          'dest': 'choosing sorting criteria',
          'conditions': ['is_map_chosen', 'is_mode_chosen'],
          'after': 'send_survey'},
@@ -147,8 +160,20 @@ class ChooseForDraft(IDialog):
               'choosing mode': {'q': "Select the game mode:",
                                 'a': get_modes(),
                                 'trans': 'mode_chosen',
-                                'next': 'choose_criteria',
+                                'next': 'choose_skill',
                                 'common_next': True},
+
+              'choosing skill': {'q': "Select your skill:",
+                                 'a': ['bronze',
+                                       'silver',
+                                       'gold',
+                                       'platinum',
+                                       'diamond',
+                                       'master',
+                                       "don't care"],
+                                 'trans': 'skill_chosen',
+                                 'next': 'choose_criteria',
+                                 'common_next': True},
 
               'choosing sorting criteria': {'q': 'Choose how to sort:',
                                             'a': ['by winrate percentage',
@@ -184,6 +209,9 @@ class ChooseForDraft(IDialog):
     def is_mode_chosen(self):
         return 'choosing mode' in self.answers
 
+    def is_skill_chosen(self):
+        return 'choosing skill' in self.answers
+
     def is_role_chosen(self):
         return 'choosing role' in self.answers
 
@@ -195,7 +223,11 @@ class ChooseForDraft(IDialog):
 
         super().get_answer(given_answer)
 
-        if self.is_map_chosen() and self.is_mode_chosen() and not self.results:
+        if self.is_map_chosen() \
+           and self.is_mode_chosen() \
+           and self.is_skill_chosen() \
+           and not self.results:
+
             print("+"*50)
             self.fetch_map_stata()
 
@@ -208,8 +240,26 @@ class ChooseForDraft(IDialog):
 
         mode_name = self.answers["choosing mode"]
 
+        if self.answers["choosing skill"] != "don't care":
+            skill_mapping = {'bronze': 0,
+                             'silver': 1,
+                             'gold': 2,
+                             'platinum': 3,
+                             'diamond': 4,
+                             'master': 5}
+
+            skill_low = skill_mapping[self.answers["choosing skill"]]
+            skill_high = skill_low + 1 if skill_low != 5 else None
+        else:
+            skill_low = None
+            skill_high = None
+
         heroes_winrates = fetch_winrates(field=self.answers["choosing map"],
-                                         mode=get_mode_idx(mode_name))
+                                         mode=get_mode_idx(mode_name),
+                                         skill_low=str(skill_low)
+                                                   if skill_low else None,
+                                         skill_high=str(skill_high)
+                                                    if skill_high else None)
 
         for hero_winrate in heroes_winrates:
 
