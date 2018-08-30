@@ -104,7 +104,7 @@ def fetch_best_builds(hero_name, build=None, field=None, mode=None):
 
 def fetch_winrates(build=None, field=None, mode=None):
 
-    all_stata = fetch_stata(build=None, field=None, mode=None)
+    all_stata = fetch_stata(build, field, mode)
 
     heroes_winrates = []
 

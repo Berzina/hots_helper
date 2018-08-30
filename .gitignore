@@ -1,3 +1,4 @@
 *.session
 config.ini
 unknown_errors.txt
+.pytest_cache/*

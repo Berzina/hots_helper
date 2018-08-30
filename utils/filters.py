@@ -2,6 +2,8 @@ import random
 import re
 from itertools import dropwhile
 
+from data.structures import BlizzHero
+
 
 def take_talent_by_name(talents_form_api, name):
     talent_search = dropwhile(lambda talent: talent['name'] != name,
@@ -15,6 +17,10 @@ def take_talent_by_name(talents_form_api, name):
 
 
 def take_by_name(bheroes, name):
+
+    assert all([type(bhero) == BlizzHero
+                for bhero in bheroes]), f'Not the all of heroes is BlizzHero.'
+
     matching = [bhero for bhero in bheroes
                 if name.lower() in bhero.hero.name.lower()]
 
@@ -26,8 +32,10 @@ def take_by_name(bheroes, name):
 
     matching.sort(key=lambda x: match_score(x.hero))
 
-    if matching[0].hero.en_name == name \
-       or matching[0].hero.ru_name == name:
+    if matching \
+       and (matching[0].hero.en_name == name
+            or matching[0].hero.ru_name == name
+            or len(matching) == 1):
 
         certain_match = matching[0]
 

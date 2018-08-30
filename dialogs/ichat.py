@@ -71,7 +71,8 @@ def send(app, query_id, user_id, message, repr_method=None, testing=False):
         if not testing:
             app.send_message(user_id, **message)
         else:
-            print(f"Sending: {message['reply_markup']}")
+            pass
+            # print(f"Sending: {message['reply_markup']}")
     else:
         if not testing:
             views.send_view(app, user_id, repr_method, *message)

@@ -1,7 +1,7 @@
 from telegraph import Telegraph
 
 from views import page_pattern
-from utils.parser import Talent, Talent2, Build
+from data.structures import Talent, Talent2, Build
 
 # from html_telegraph_poster import TelegraphPoster
 # t = TelegraphPoster()

@@ -1,3 +1,6 @@
 [
-  "tests/test_gethero.py::test_get_by_name"
+  "tests/test_filters.py::test_take_by_name[D.Va-expected0]",
+  "tests/test_filters.py::test_take_by_name[\\u0410\\u043d\\u0430-expected1]",
+  "tests/test_filters.py::test_take_by_name[E.T.C.-expected2]",
+  "tests/test_filters.py::test_take_by_name[Art-expected3]"
 ]

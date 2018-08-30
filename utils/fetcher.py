@@ -12,9 +12,6 @@ STATISTICS_URL = 'https://hots.dog/api'
 API_URL = 'http://hotsapi.net/api/v1'
 BLIZZHERO_URL = 'http://blizzardheroes.ru'
 
-BlizzHero = namedtuple('BlizzHero', ('hero', 'role', 'stats',
-                                     'builds'))
-
 
 def basic_fetch(url, appendix='', params={}):
     try:

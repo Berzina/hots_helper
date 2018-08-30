@@ -42,17 +42,38 @@ def set_blizz(blizz_heroes: list, replace=True):
     global BLIZZ_HEROES
 
     if replace:
-        BLIZZ_HEROES = blizz_heroes
+        BLIZZ_HEROES = [bhero for bhero in blizz_heroes if bhero]
     else:
         for blizz_hero in blizz_heroes:
             founded = False
             for idx, item in enumerate(BLIZZ_HEROES):
-                if item.hero.ru_name == blizz_hero.hero.ru_name\
-                  or item.hero.en_name == blizz_hero.hero.en_name:
+
+                if blizz_hero \
+                   and ((blizz_hero.hero.ru_name != ''
+                         and item.hero.ru_name == blizz_hero.hero.ru_name)
+                        or item.hero.en_name == blizz_hero.hero.en_name):
+
                     founded = True
+
+                    print(f'Hero ru name matched: '
+                          f'{item.hero.ru_name == blizz_hero.hero.ru_name}')
+
+                    print(f'Hero en name is mathing: '
+                          f'{item.hero.en_name == blizz_hero.hero.en_name}')
+
+                    print(f'Replacing: {BLIZZ_HEROES[idx].hero.name}')
+
                     BLIZZ_HEROES[idx] = blizz_hero
 
-        if not founded:
+                    print("\nAdded heroes: \n{}\nwas loaded to bin.\n"
+                          .format(", ".join([bhero.hero.name
+                                             for bhero in blizz_heroes])))
+
+                    print("\nAll heroes: \n{}\nwas loaded to bin.\n"
+                          .format(", ".join([bhero.hero.name
+                                             for bhero in BLIZZ_HEROES])))
+
+        if not founded and blizz_hero:
             BLIZZ_HEROES.append(blizz_hero)
 
     if not os.path.isfile(BLIZZ_FILE):
@@ -60,12 +81,6 @@ def set_blizz(blizz_heroes: list, replace=True):
 
     with open(BLIZZ_FILE, 'wb') as fp:
         pickle.dump(BLIZZ_HEROES, fp, fix_imports=True)
-
-    print("\nAdded heroes: \n{}\nwas loaded to bin.\n".format(", ".join(
-        [bhero.hero.name for bhero in blizz_heroes])))
-
-    print("\nAll heroes: \n{}\nwas loaded to bin.\n".format(", ".join(
-        [bhero.hero.name for bhero in BLIZZ_HEROES])))
 
 
 init()

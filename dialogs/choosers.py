@@ -196,6 +196,7 @@ class ChooseForDraft(IDialog):
         super().get_answer(given_answer)
 
         if self.is_map_chosen() and self.is_mode_chosen() and not self.results:
+            print("+"*50)
             self.fetch_map_stata()
 
         if self.is_role_changed():
@@ -283,7 +284,7 @@ class ChooseForDraft(IDialog):
 
         print("Getting from:\n", "*"*50)
         for hero, hero_win in self.results:
-            print(hero.hero.name)
+            print(hero.hero.name, hero_win)
         print("*"*50)
 
         self.send_survey()
@@ -516,7 +517,7 @@ class ChooseForQuick(IDialog):
 
         print("Getting from:\n", "*"*50)
         for hero, hero_win in self.results:
-            print(hero.hero.name)
+            print(hero.hero.name, hero_win)
         print("*"*50)
 
         self.send_survey()

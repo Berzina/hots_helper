@@ -7,24 +7,7 @@ from utils.filters import get_cyrillic, get_cyrillic_str, take_talent_by_name
 
 from utils.fetcher import fetch_blizzhero_page
 
-ApiHero = namedtuple('ApiHero', ('name', 'ru_name', 'en_name', 'image',
-                                 'role', 'type'))
-
-Hero = namedtuple('Hero', ('name', 'ru_name', 'en_name', 'image',
-                           'role', 'type', 'universe', 'blizz_link',
-                           'stats'))
-
-Stats = namedtuple('Stats', ('damage', 'utility', 'survivability',
-                             'complexity'))
-
-Build = namedtuple('Build', ('name', 'talents', 'link'))
-Build2 = namedtuple('Build2', ('name', 'talents', 'count', 'winrate'))
-
-Talent = namedtuple('Talent', ('idx', 'level', 'name', 'descr', 'img'))
-Talent2 = namedtuple('Talent2', ('name', 'title', 'idx', 'level', 'ability',
-                                 'descr', 'img'))
-
-BlizzHero = namedtuple('BlizzHero', ('hero', 'builds'))
+from data.structures import *
 
 
 def parse_builds(hero_talents, best_builds):
@@ -95,6 +78,7 @@ class BlizzParser:
         self.page = page
 
         if hero_list and page:
+            print("Parse main page...")
             self.parse_main()
 
     def parse_main(self):
