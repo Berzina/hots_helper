@@ -2,9 +2,7 @@ from collections import namedtuple, Counter
 from pprint import pprint
 from .fetcher import fetch_hotsdog
 
-Stata = namedtuple('Stata', ('hero_name',
-                             'percent', 'count', 'win_count',
-                             'diff_percent', 'diff_count'))
+from data.structures import Stata
 
 
 def fetch_init():

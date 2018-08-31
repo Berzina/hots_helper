@@ -17,6 +17,7 @@ from utils.parser import parse_builds
 from utils import pages
 
 from utils.exceptions import *
+from data.structures import *
 
 View = namedtuple('View', ('view'))
 Message = namedtuple('Message', ('message'))
@@ -127,12 +128,15 @@ def get_hero_pages(name):
 
 def make_hero_profile(bhero, stata, with_stats=False):
 
+    assert type(bhero) == BlizzHero
+    assert type(stata) == Stata
+
     stats = represent_stats(bhero.hero.stats) if with_stats else ''
 
-    caption = f'**{bhero.hero.name}**\n' \
-              + f'__Winrate:{stata.percent}% ' \
-              + f'(games: {stata.count}, wins: {stata.win_count})__\n' \
-              + f'```{stats}```'
+    caption = (f'**{bhero.hero.name}**\n'
+               f'__Winrate:{stata.percent}% '
+               f'(games: {stata.count}, wins: {stata.win_count})__\n'
+               f'```{stats}```')
 
     if bhero.hero.image:
         view = View(Photo(bhero.hero.image,
@@ -148,6 +152,9 @@ make_long_hero_profile = partial(make_hero_profile, with_stats=True)
 
 
 def get_hero_variant_buttons(some_heroes):
+
+    assert all([type(bhero) == BlizzHero for bhero in some_heroes])
+
     some_heroes = some_heroes[:5]
 
     buttons = []
@@ -163,12 +170,13 @@ def get_hero_variant_buttons(some_heroes):
 def get_inline_results(query):
     results = []
 
-    some_heroes = take_by_name(BLIZZ_HEROES, query)[:5]
+    some_heroes, _ = take_by_name(BLIZZ_HEROES, query)
+    some_heroes = some_heroes[:5]
 
-    for idx, bhero in enumerate(some_heroes):
+    for bhero in some_heroes:
         results.append(
             InputBotInlineResult(
-                        id=str(idx),
+                        id=bhero.hero.en_name,
                         type='article',
                         send_message=InputBotInlineMessageText(
                            bhero.hero.en_name),

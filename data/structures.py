@@ -18,3 +18,7 @@ Talent2 = namedtuple('Talent2', ('name', 'title', 'idx', 'level', 'ability',
                                  'descr', 'img'))
 
 BlizzHero = namedtuple('BlizzHero', ('hero', 'builds'))
+
+Stata = namedtuple('Stata', ('hero_name',
+                             'percent', 'count', 'win_count',
+                             'diff_percent', 'diff_count'))
