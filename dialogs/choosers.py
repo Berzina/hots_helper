@@ -2,7 +2,6 @@ from dialogs.interactive_dialog import IDialog
 
 from utils.statistics import fetch_init, fetch_winrates
 from utils import filters
-from utils import sorting
 
 from data.storage import BLIZZ_HEROES
 
