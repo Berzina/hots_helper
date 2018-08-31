@@ -19,30 +19,30 @@ from utils import pages
 from utils.exceptions import *
 
 View = namedtuple('View', ('view'))
-Message = namedtuple('Message', ('type', 'message'))
-MessageList = namedtuple('MessageList', ('type', 'messages'))
-Markup = namedtuple('Markup', ('type', 'message', 'markup'))
-Photo = namedtuple('Photo', ('type', 'photo', 'caption'))
+Message = namedtuple('Message', ('message'))
+MessageList = namedtuple('MessageList', ('messages'))
+Markup = namedtuple('Markup', ('message', 'markup'))
+Photo = namedtuple('Photo', ('photo', 'caption'))
 
 
 def send_view(app, user_id, construct_method, *params):
     send_this = construct_method(*params)
 
-    if send_this.view.type == 'message':
+    if type(send_this.view) == Message:
         app.send_message(user_id,
                          send_this.view.message)
 
-    elif send_this.view.type == 'message_list':
+    elif type(send_this.view) == MessageList:
         for message in send_this.view.messages:
             app.send_message(user_id,
                              message)
 
-    elif send_this.view.type == 'markup':
+    elif type(send_this.view) == Markup:
         app.send_message(user_id,
                          send_this.view.message,
                          reply_markup=send_this.view.markup)
 
-    elif send_this.view.type == 'photo':
+    elif type(send_this.view) == Photo:
         try:
             app.send_photo(
                 user_id,
@@ -65,8 +65,7 @@ def get_hero_profile(name):
     if not some_heroes:
         message = f'Found no heroes for you :( Is "{name}" hero name correct?'
 
-        view = View(Message('message',
-                            message))
+        view = View(Message(message))
 
     elif certain_hero:
         bhero = certain_hero
@@ -80,15 +79,12 @@ def get_hero_profile(name):
                           represent_stats(bhero.hero.stats))
 
         if bhero.hero.image:
-            view = View(Photo('photo',
-                              bhero.hero.image,
+            view = View(Photo(bhero.hero.image,
                               caption))
         else:
-            view = View(Message('message',
-                                caption))
+            view = View(Message(caption))
     else:
-        view = View(Markup('markup',
-                           'Please choose one:',
+        view = View(Markup('Please choose one:',
                            get_hero_variant_buttons(some_heroes)))
 
     return view
@@ -124,8 +120,7 @@ def get_hero_pages(name):
     else:
         page_links = []
 
-    view = View(MessageList('message_list',
-                            page_links))
+    view = View(MessageList(page_links))
 
     return view
 
@@ -140,12 +135,10 @@ def make_hero_profile(bhero, stata, with_stats=False):
               + f'```{stats}```'
 
     if bhero.hero.image:
-        view = View(Photo('photo',
-                          bhero.hero.image,
+        view = View(Photo(bhero.hero.image,
                           caption))
     else:
-        view = View(Message('message',
-                            caption))
+        view = View(Message(caption))
 
     return view
 
