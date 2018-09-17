@@ -80,6 +80,7 @@ class BlizzParser:
         if hero_list and page:
             print("Parse main page...")
             self.parse_main()
+            print("Main parsed...")
 
     def parse_main(self):
         stats = Stats(0, 0, 0, 0)

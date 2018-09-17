@@ -36,6 +36,7 @@ def fetch_hero_talents(en_name):
 
 
 def fetch_blizzhero_page(link=BLIZZHERO_URL + '/heroes'):
+    print("Starting fetch hero page...")
     try:
         options = webdriver.ChromeOptions()
         options.add_argument('--headless')
@@ -49,11 +50,15 @@ def fetch_blizzhero_page(link=BLIZZHERO_URL + '/heroes'):
 
         browser.get(link)
 
+        print("Waiting hero page...")
+
         WebDriverWait(browser, timeout=10).until(
             lambda x: x.find_elements_by_xpath(
                 '/html/body/div/div[2]/div/div[2]/div[1]/div[2]'))
         # ... other actions
         page = browser.page_source
+
+        print("Ready!...")
 
         browser.close()
 
