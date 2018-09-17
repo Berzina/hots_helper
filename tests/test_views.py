@@ -51,6 +51,8 @@ def test_views_get_hero_profile(test_input, expected):
                          [("Art", None),
                           ("Arthas", "Arthas"),
                           ("E.T.C.", "ETC"),
+                          ("Mephisto", "Mephisto"),
+                          ("Whitemane", "Whitemane"),
                           ("Хуйня", None)])
 def test_views_get_hero_pages(test_input, expected):
 
@@ -77,8 +79,9 @@ def test_views_get_hero_pages(test_input, expected):
 
 @pytest.fixture(scope="function",
                 params=[("Arthas", False),
+                        ("Mephisto", False),
                         ("Хуйня", True)],
-                ids=["Arthas", "Хуйня"])
+                ids=["Arthas", "Mephisto", "Хуйня"])
 def setup_for_make_profile(request):
     test_input, expect_failure = request.param
 

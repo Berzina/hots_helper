@@ -5,12 +5,12 @@ from collections import namedtuple
 
 from utils.filters import get_cyrillic, get_cyrillic_str, take_talent_by_name
 
-from utils.fetcher import fetch_blizzhero_page
+from utils.fetcher import fetch_blizzhero_page, check_image, HOTSDOG_URL
 
 from data.structures import *
 
 
-def parse_builds(hero_talents, best_builds):
+def parse_builds(hero_talents, alt_hero_talents, best_builds):
 
     builds = []
 
@@ -18,19 +18,41 @@ def parse_builds(hero_talents, best_builds):
         talents = []
 
         if build_info:
+            t_lvl = 1
 
             for name in build_info['Build']:
                 raw_talent = take_talent_by_name(hero_talents, name)
+                alt_raw_talent = alt_hero_talents[name]
+                alt_img = f'{HOTSDOG_URL}/img/talent/{name}.png'
 
-                talent = Talent2(name=raw_talent['name'],
-                                 title=raw_talent['title'],
-                                 idx=raw_talent['sort'],
-                                 level=raw_talent['level'],
-                                 ability=raw_talent['ability'],
-                                 descr=raw_talent['description'],
-                                 img=list(raw_talent['icon_url'].values())[0])
+                if raw_talent:
+                    img = list(raw_talent['icon_url']
+                               .values())[0]
+                    img = img if check_image(img) else alt_img
+
+                    talent = Talent2(name=raw_talent['name'],
+                                     title=raw_talent['title'],
+                                     idx=raw_talent['sort'],
+                                     level=raw_talent['level'],
+                                     ability=raw_talent['ability'],
+                                     descr=raw_talent['description'],
+                                     img=img)
+
+                elif name in alt_hero_talents:
+                    raw_talent = alt_hero_talents[name]
+                    talent = Talent2(name=name,
+                                     title=alt_raw_talent['Name'],
+                                     idx=0,
+                                     level=t_lvl,
+                                     ability=0,
+                                     descr=alt_raw_talent['Text'],
+                                     img=alt_img)
+                else:
+                    raise Exception(f"Cannot find talent {name}!")
 
                 talents.append(talent)
+
+                t_lvl += 3 if t_lvl != 16 else 4
 
             build = Build2(name=build_name.capitalize(),
                            talents=talents,
@@ -59,11 +81,15 @@ class APIParser:
                    if ru_name\
                    else hero["name"]
 
+            alt_img = f'{HOTSDOG_URL}/img/hero_full/{hero["name"].lower()}.png'
+            img = list(hero["icon_url"].values())[0]
+            img = img if check_image(img) else alt_img
+
             self.hero_list.append(
                 ApiHero(name,
                         ru_name.capitalize(),
                         hero["name"],
-                        list(hero["icon_url"].values())[0],
+                        img,
                         hero["role"],
                         hero["type"]))
 

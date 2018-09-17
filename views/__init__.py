@@ -11,7 +11,7 @@ from data.storage import BLIZZ_HEROES
 from utils.filters import take_by_name
 
 from utils.fetcher import fetch_hero_talents
-from utils.statistics import fetch_hero_stata, fetch_best_builds
+from utils.statistics import fetch_hero_stata, fetch_best_builds, fetch_talents
 
 from utils.parser import parse_builds
 from utils import pages
@@ -108,7 +108,9 @@ def get_hero_pages(name):
 
         hero_talents = fetch_hero_talents(bhero.hero.en_name)
 
-        builds = parse_builds(hero_talents, best_builds)
+        alt_hero_talents = fetch_talents(bhero.hero.en_name)
+
+        builds = parse_builds(hero_talents, alt_hero_talents, best_builds)
 
         if builds:
             bhero = bhero._replace(builds=builds)

@@ -23,7 +23,8 @@ ALL_HEROES_NAMES = ['Abathur', 'Alarak', "Anub'arak", 'Artanis', 'Arthas',
                     'Valeera', 'Valla', 'Varian', 'Xul', 'Zagara', 'Zarya',
                     'Zeratul', "Zul'jin", "Kel'Thuzad", 'Ana', 'Junkrat',
                     'Alexstrasza', 'Hanzo', 'Blaze', 'Maiev', 'Fenix',
-                    'Deckard', 'Yrel', 'Whitemane', 'D.Va', 'E.T.C.']
+                    'Deckard', 'Yrel', 'Whitemane', 'D.Va', 'E.T.C.',
+                    'Mephisto']
 
 
 @pytest.fixture(scope="session", autouse=True)
@@ -37,20 +38,24 @@ def auto_session_resource(request):
     request.addfinalizer(auto_session_resource_teardown)
 
 
+@pytest.mark.skip(reason="Tested and ok")
 @pytest.mark.parametrize("test_input,expected",
                          [("D.Va", ("D.Va", ["D.Va"])),
                           ("Ана", ("Ana", ["Ana", "Sylvanas"])),
                           ("E.T.C.", ("E.T.C.", ["E.T.C."])),
+                          ("Mephis", ("Mephisto", ["Mephisto"])),
                           ("Art", (None, ["Artanis", "Arthas"])),
                           ("", (None, ALL_HEROES_NAMES))])
 def test_take_by_name(test_input, expected):
 
     matching, certain_hero = filters.take_by_name(BLIZZ_HEROES, test_input)
 
+    print(certain_hero)
+
     en_name = certain_hero.hero.en_name if certain_hero else None
     matching = [bhero.hero.en_name for bhero in matching]
 
-    print(f"input: {test_input}"
+    print(f"input: {test_input}\n"
           + f"output: {en_name, matching}, expected: {expected}")
 
     assert en_name == expected[0]
@@ -70,9 +75,21 @@ def test_take_by_name(test_input, expected):
                           'mana_cost': whatever,
                           'level': whatever}),
                         (("Arthas", "BadTalent"),
-                         {})],
+                         {}),
+                        (("Mephisto", "MephistoShadeOfMephistoMaliciousIntent"),
+                         {'name': 'MephistoShadeOfMephistoMaliciousIntent',
+                          'title': 'Summon Sindragosa',
+                          'description': whatever,
+                          'icon': whatever,
+                          'icon_url': {},
+                          'ability': whatever,
+                          'sort': whatever,
+                          'cooldown': whatever,
+                          'mana_cost': whatever,
+                          'level': whatever}),],
                 ids=["Arthas_existing_talent",
-                     "Arthas_non_existing talent"])
+                     "Arthas_non_existing talent",
+                     "Mephisto_existing talent"])
 def setup_talents_from_api(request):
     hero_name, talent_name = request.param[0]
     expected_output = request.param[1]

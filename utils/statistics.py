@@ -132,6 +132,15 @@ def fetch_build_winrates(hero_name, field=None, mode=None):
     return all_data
 
 
+def fetch_talents(hero_name):
+    params, _ = construct_params(None, None, hero_name)
+
+    builds_data = fetch_hotsdog("/get-build-winrates",
+                                params)
+
+    return builds_data['Talents']
+
+
 def fetch_best_builds(hero_name, field=None, mode=None):
 
     most_popular = {}

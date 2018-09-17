@@ -7,20 +7,24 @@ from threading import Thread, Event
 from selenium import webdriver
 from selenium.webdriver.support.ui import WebDriverWait
 
-
-STATISTICS_URL = 'https://hots.dog/api'
+HOTSDOG_URL = 'https://hots.dog'
+STATISTICS_URL = f'{HOTSDOG_URL}/api'
 API_URL = 'http://hotsapi.net/api/v1'
 BLIZZHERO_URL = 'http://blizzardheroes.ru'
 
 
 def basic_fetch(url, appendix='', params={}):
-    try:
-        r = requests.get(url + appendix, params=params)
-        response = r.json()
-    except Exception:
-        print(f'{url + appendix} is unresponsive')
-    else:
+
+    r = requests.get(url + appendix, params=params)
+
+    if r.status_code != 404:
+        try:
+            response = r.json()
+        except Exception:
+            response = r
         return response
+    else:
+        print(f'{url + appendix} is unresponsive')
 
 
 fetch_heroes = partial(basic_fetch, API_URL, "/heroes")
@@ -66,3 +70,7 @@ def fetch_blizzhero_page(link=BLIZZHERO_URL + '/heroes'):
         print(e)
     else:
         return page
+
+
+def check_image(img_url):
+    return True if basic_fetch(img_url) else False
