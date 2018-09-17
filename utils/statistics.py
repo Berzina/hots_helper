@@ -84,11 +84,12 @@ def fetch_hero_stata(hero_name, build=None, field=None, mode=None):
     all_data = fetch_stata(field, mode)
 
     if all_data:
-        prev = all_data["Previous"][hero_name]
+        prev = all_data["Previous"].get(hero_name,
+                                        {'Losses': 0, 'Wins': 0})
         current = all_data["Current"][hero_name]
 
         prev_count = prev['Losses'] + prev['Wins']
-        prev_percent = 100*(prev['Wins']/prev_count)
+        prev_percent = 100*(prev['Wins']/prev_count) if prev_count else 0
 
         current_count = current['Losses'] + current['Wins']
         current_percent = 100*(current['Wins']/current_count)
